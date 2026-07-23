@@ -1,0 +1,13 @@
+{
+  "name": "functions",
+  "description": "Cloud Function that proxies chat requests to the xAI API for Nuru",
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-functions": "^6.0.0",
+    "firebase-admin": "^12.0.0"
+  },
+  "private": true
+}
