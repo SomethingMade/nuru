@@ -445,6 +445,13 @@
                 </span>
                 <span class="model-badge">Soon</span>
               </button>
+              <button class="model-option" data-model="kimi-k3" data-label="Kimi K3" disabled>
+                <span class="model-text">
+                  <span class="model-name">Kimi K3</span>
+                  <span class="model-desc">Moonshot AI</span>
+                </span>
+                <span class="model-badge">Soon</span>
+              </button>
             </div>
           </div>
         </div>
@@ -482,13 +489,13 @@
   //
   // The composer's model picker is now a provider switcher for the wrapper:
   // Grok is live and sends model: 'grok-latest' with each request (see
-  // chatWithNuru({ messages, model }) below). Gemini and Claude are shown
-  // as disabled "Soon" options with no working backend yet — chatWithNuru
-  // in functions/index.js only ever calls xAI right now. Wiring up Gemini
-  // or Claude later means: (1) add their API calls server-side in
-  // functions/index.js, keyed off data.model ('gemini' / 'claude'), and
-  // (2) remove the `disabled` attribute from the matching .model-option
-  // button here once that backend path actually works.
+  // chatWithNuru({ messages, model }) below). Gemini, Claude, and Kimi K3
+  // are shown as disabled "Soon" options with no working backend yet —
+  // chatWithNuru in functions/index.js only ever calls xAI right now.
+  // Wiring one up later means: (1) add its API call server-side in
+  // functions/index.js, keyed off data.model ('gemini' / 'claude' /
+  // 'kimi-k3'), and (2) remove the `disabled` attribute from the matching
+  // .model-option button here once that backend path actually works.
   // ============================================================
 
   const hero = document.getElementById('hero');
