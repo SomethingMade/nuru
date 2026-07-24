@@ -108,83 +108,6 @@
     cursor:pointer; flex-shrink:0; margin-right:10px;
   }
 
-  .view-tabs{
-    display:flex; background: var(--bg-card); border:1px solid var(--line);
-    border-radius:999px; padding:3px; gap:2px; margin-left:auto;
-  }
-  .view-tab{
-    display:flex; align-items:center; gap:6px;
-    background:none; border:none; padding:7px 15px; border-radius:999px;
-    font-family: var(--font-display); font-weight:600; font-size:11.5px;
-    text-transform:uppercase; letter-spacing:0.04em; color: var(--ink-faint); cursor:pointer;
-    transition: background .15s, color .15s;
-  }
-  .view-tab svg{ width:13px; height:13px; }
-  .view-tab.active{ background: var(--bg-raised); color: var(--ink); box-shadow: 0 1px 3px rgba(23,19,15,0.08); }
-  .view-tab:hover:not(.active){ color: var(--ink-dim); }
-
-  /* ================= voice panel ================= */
-  .voice-panel{
-    flex:1; display:none; flex-direction:column; align-items:center; justify-content:center;
-    padding: 32px 24px; text-align:center; position:relative;
-    background: radial-gradient(55% 40% at 50% 30%, rgba(196,121,31,0.1) 0%, rgba(196,121,31,0) 70%), var(--bg);
-  }
-  .voice-panel.active{ display:flex; }
-
-  .voice-orb-wrap{ position:relative; width:172px; height:172px; display:flex; align-items:center; justify-content:center; margin-bottom:26px; }
-  .voice-orb{
-    width:132px; height:132px; border-radius:50%;
-    background: radial-gradient(circle at 35% 30%, var(--accent-bright), var(--accent));
-    display:flex; align-items:center; justify-content:center;
-    box-shadow: 0 12px 38px rgba(196,121,31,0.32);
-    transition: transform .25s ease;
-  }
-  .voice-orb svg{ width:46px; height:46px; }
-  .voice-ring{ position:absolute; inset:0; border-radius:50%; border:2px solid var(--accent-line); opacity:0; }
-  .voice-panel.state-listening .voice-ring{ animation: voicering 1.7s ease-out infinite; }
-  .voice-panel.state-connecting .voice-orb{ animation: voicepulse 1s ease-in-out infinite; }
-  .voice-panel.state-speaking .voice-orb{ animation: voicespeak 0.85s ease-in-out infinite; }
-  .voice-panel.state-error .voice-orb{ background: radial-gradient(circle at 35% 30%, #d97452, #a8341a); }
-  @keyframes voicering{ 0%{ opacity:.55; transform:scale(0.88);} 100%{ opacity:0; transform:scale(1.4);} }
-  @keyframes voicepulse{ 0%,100%{ opacity:1;} 50%{ opacity:0.6;} }
-  @keyframes voicespeak{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.07);} }
-
-  .voice-status{ font-family: var(--font-display); font-weight:600; font-size:17px; margin:0 0 6px; letter-spacing:-0.005em; }
-  .voice-sub{ font-size:13px; color: var(--ink-dim); max-width:300px; margin:0 0 28px; line-height:1.55; }
-
-  .voice-start-btn{
-    display:flex; align-items:center; gap:9px;
-    background: linear-gradient(180deg, var(--accent-bright), var(--accent));
-    color:#221605; border:none; padding: 13px 30px; border-radius:999px;
-    font-family: var(--font-display); font-weight:600; font-size:13px;
-    text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;
-    box-shadow: 0 8px 24px rgba(196,121,31,0.25);
-    transition: transform .12s, box-shadow .12s;
-  }
-  .voice-start-btn:hover{ transform: translateY(-1px); }
-  .voice-start-btn svg{ width:15px; height:15px; }
-
-  .voice-active-controls{ display:none; align-items:center; gap:16px; }
-  .voice-btn-icon{
-    width:48px; height:48px; border-radius:50%;
-    background: var(--bg-card); border:1px solid var(--line); color: var(--ink-dim);
-    display:flex; align-items:center; justify-content:center; cursor:pointer;
-    transition: background .15s, border-color .15s, color .15s;
-  }
-  .voice-btn-icon svg{ width:18px; height:18px; }
-  .voice-btn-icon:hover{ border-color: var(--line-bright); }
-  .voice-btn-icon.muted{ background: var(--accent-soft); border-color: var(--accent-line); color: var(--accent-text); }
-  .voice-btn-icon.end-call{ width:56px; height:56px; background: #C43C1F; border-color: #C43C1F; color:#fff; }
-  .voice-btn-icon.end-call:hover{ background:#A8341A; border-color:#A8341A; }
-
-  .voice-transcript{
-    margin-top:32px; max-width:520px; width:100%; max-height:170px; overflow-y:auto;
-    text-align:left; font-size:13px; color: var(--ink-dim); line-height:1.6;
-    padding: 0 8px;
-  }
-  .voice-transcript .vt-line{ margin-bottom:7px; }
-  .voice-transcript .vt-line b{ color: var(--ink); font-weight:600; }
-
   /* ================= hero (first screen) ================= */
   .hero{
     position:absolute; inset:0;
@@ -529,13 +452,6 @@
     }
     .auth-close{ top:12px; right:16px; }
     .auth-field input{ font-size:16px; }
-
-    .view-tab{ padding:6px 12px; font-size:10.5px; }
-    .voice-orb-wrap{ width:140px; height:140px; }
-    .voice-orb{ width:106px; height:106px; }
-    .voice-orb svg{ width:38px; height:38px; }
-    .voice-status{ font-size:16px; }
-    .voice-transcript{ max-height:130px; }
   }
 </style>
 </head>
@@ -575,16 +491,6 @@
     <button class="menu-btn" id="menu-btn" aria-label="Open menu">
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 4.5H16M2 9H16M2 13.5H16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
     </button>
-    <div class="view-tabs" id="view-tabs">
-      <button class="view-tab active" data-view="chat" type="button">
-        <svg viewBox="0 0 16 16" fill="none"><path d="M2 4.5A1.5 1.5 0 0 1 3.5 3h9A1.5 1.5 0 0 1 14 4.5v5a1.5 1.5 0 0 1-1.5 1.5H7l-2.5 2.5v-2.5H3.5A1.5 1.5 0 0 1 2 9.5v-5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
-        Chat
-      </button>
-      <button class="view-tab" data-view="voice" type="button">
-        <svg viewBox="0 0 16 16" fill="none"><rect x="6" y="2" width="4" height="8" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M4 8.5a4 4 0 0 0 8 0M8 12.5v1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-        Voice
-      </button>
-    </div>
   </div>
 
   <!-- HERO / FIRST SCREEN -->
@@ -650,34 +556,6 @@
 
   <div class="messages" id="messages">
     <div class="messages-inner" id="messages-inner"></div>
-  </div>
-
-  <!-- VOICE PANEL -->
-  <div class="voice-panel" id="voice-panel">
-    <div class="voice-orb-wrap">
-      <div class="voice-ring"></div>
-      <div class="voice-orb" id="voice-orb">
-        <svg viewBox="0 0 20 20" fill="none"><rect x="7.5" y="2.5" width="5" height="10" rx="2.5" stroke="#221605" stroke-width="1.5"/><path d="M5 10.5a5 5 0 0 0 10 0M10 15.5v2.2" stroke="#221605" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </div>
-    </div>
-    <h3 class="voice-status" id="voice-status">Talk to Nuru</h3>
-    <p class="voice-sub" id="voice-sub">Tap to start a live voice conversation, powered by Grok Voice.</p>
-
-    <button class="voice-start-btn" id="voice-start-btn" type="button">
-      <svg viewBox="0 0 16 16" fill="none"><rect x="6" y="1.5" width="4" height="7.5" rx="2" stroke="#221605" stroke-width="1.4"/><path d="M4 7.5a4 4 0 0 0 8 0M8 11.5v2" stroke="#221605" stroke-width="1.4" stroke-linecap="round"/></svg>
-      Start voice chat
-    </button>
-
-    <div class="voice-active-controls" id="voice-active-controls">
-      <button class="voice-btn-icon" id="voice-mute-btn" type="button" title="Mute">
-        <svg viewBox="0 0 18 18" fill="none"><rect x="7" y="2" width="4" height="8" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M4.5 8.5a4.5 4.5 0 0 0 9 0M9 13v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-      </button>
-      <button class="voice-btn-icon end-call" id="voice-end-btn" type="button" title="End call">
-        <svg viewBox="0 0 18 18" fill="none"><path d="M3 6.5c4-3.3 8-3.3 12 0M5.3 9.2c2.5-2 4.9-2 7.4 0M7.6 11.9c1.1-.9 1.7-.9 2.8 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.5 3.5L15.5 14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-
-    <div class="voice-transcript" id="voice-transcript"></div>
   </div>
 
   <div class="composer-area" id="composer-area">
@@ -864,16 +742,7 @@
   const authSwitchText = document.getElementById('auth-switch-text');
   const authSwitchBtn = document.getElementById('auth-switch-btn');
 
-  const viewTabs = document.querySelectorAll('.view-tab');
-  const voicePanel = document.getElementById('voice-panel');
   const composerAreaEl = document.getElementById('composer-area');
-  const voiceStatusEl = document.getElementById('voice-status');
-  const voiceSubEl = document.getElementById('voice-sub');
-  const voiceStartBtn = document.getElementById('voice-start-btn');
-  const voiceActiveControls = document.getElementById('voice-active-controls');
-  const voiceMuteBtn = document.getElementById('voice-mute-btn');
-  const voiceEndBtn = document.getElementById('voice-end-btn');
-  const voiceTranscriptEl = document.getElementById('voice-transcript');
 
   let chatWithNuru = null;
   let conversation = [];
@@ -890,20 +759,6 @@
   let historyDocs = {}; // id -> {title, messages, model}
   let savingConv = false;
   let appEntered = false;
-
-  let getVoiceSession = null;
-  let voiceWs = null;
-  let voiceAudioCtx = null;
-  let voiceMicStream = null;
-  let voiceProcessor = null;
-  let voiceMicSource = null;
-  let voicePlaybackCtx = null;
-  let voiceNextPlayTime = 0;
-  let voiceState = 'idle'; // idle | connecting | listening | speaking | error
-  let voiceMuted = false;
-  let pendingVoiceStart = false;
-  let voicePendingAssistantText = '';
-  const VOICE_SAMPLE_RATE = 24000;
 
   function novaAvatar(){
     const div = document.createElement('div');
@@ -985,31 +840,8 @@
   startBtn.addEventListener('click', enterApp);
 
   function ensureChatView(){
-    if(voiceState !== 'idle' && voiceState !== 'error') stopVoiceCall();
-    voicePanel.classList.remove('active');
     composerAreaEl.style.display = '';
-    viewTabs.forEach(t => t.classList.toggle('active', t.dataset.view === 'chat'));
   }
-
-  function setView(view){
-    viewTabs.forEach(t => t.classList.toggle('active', t.dataset.view === view));
-    if(view === 'voice'){
-      hero.classList.add('hidden');
-      emptyState.classList.remove('active');
-      messagesEl.classList.remove('active');
-      composerAreaEl.style.display = 'none';
-      voicePanel.classList.add('active');
-      closeSidebar();
-    }else{
-      if(voiceState !== 'idle' && voiceState !== 'error') stopVoiceCall();
-      voicePanel.classList.remove('active');
-      composerAreaEl.style.display = '';
-      if(hasStarted){ messagesEl.classList.add('active'); }
-      else if(appEntered){ emptyState.classList.add('active'); }
-      else{ hero.classList.remove('hidden'); }
-    }
-  }
-  viewTabs.forEach(t => t.addEventListener('click', () => setView(t.dataset.view)));
 
   function beginConversation(){
     if(hasStarted) return;
@@ -1145,7 +977,6 @@
     }finally{
       sendBtn.disabled = false;
       inputEl.disabled = false;
-      inputEl.focus();
     }
   }
 
@@ -1159,6 +990,7 @@
     }
     inputEl.value = '';
     inputEl.style.height = 'auto';
+    inputEl.blur(); // hide the keyboard on send; only reopen when the user taps back in
     sendMessage(text);
   }
 
@@ -1201,7 +1033,6 @@
     authOverlay.classList.remove('show');
     document.body.style.overflow = '';
     pendingMessage = null;
-    pendingVoiceStart = false;
     setTimeout(() => authOverlay.classList.remove('active'), 220);
   }
   authClose.addEventListener('click', closeAuthSheet);
@@ -1220,12 +1051,9 @@
 
   async function afterAuthSuccess(){
     const text = pendingMessage;
-    const wantsVoice = pendingVoiceStart;
     closeAuthSheet();
     if(text){
       sendMessage(text);
-    }else if(wantsVoice){
-      startVoiceCall();
     }
   }
 
@@ -1311,219 +1139,6 @@
     }
   }
 
-  // ================= Voice (Grok Voice Agent API) =================
-  // Requires a callable Firebase Function named "createVoiceSession" that
-  // mints a short-lived xAI ephemeral token server-side (see setup notes
-  // provided alongside this file) so the raw XAI_API_KEY is never exposed
-  // in the browser.
-
-  function floatTo16BitPCM(float32Array){
-    const buffer = new ArrayBuffer(float32Array.length * 2);
-    const view = new DataView(buffer);
-    let offset = 0;
-    for(let i = 0; i < float32Array.length; i++, offset += 2){
-      const s = Math.max(-1, Math.min(1, float32Array[i]));
-      view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-    }
-    return buffer;
-  }
-  function base64EncodePCM16(float32Array){
-    const buf = floatTo16BitPCM(float32Array);
-    const bytes = new Uint8Array(buf);
-    let binary = '';
-    const chunkSize = 0x8000;
-    for(let i = 0; i < bytes.length; i += chunkSize){
-      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
-    }
-    return btoa(binary);
-  }
-  function base64ToFloat32(base64){
-    const binary = atob(base64);
-    const bytes = new Uint8Array(binary.length);
-    for(let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-    const int16 = new Int16Array(bytes.buffer);
-    const float32 = new Float32Array(int16.length);
-    for(let i = 0; i < int16.length; i++) float32[i] = int16[i] / 0x8000;
-    return float32;
-  }
-
-  function setVoiceState(state, subtext){
-    voiceState = state;
-    voicePanel.classList.remove('state-idle', 'state-connecting', 'state-listening', 'state-speaking', 'state-error');
-    voicePanel.classList.add('state-' + state);
-    const labels = {
-      idle: 'Talk to Nuru',
-      connecting: 'Connecting…',
-      listening: "I'm listening",
-      speaking: 'Speaking…',
-      error: 'Something went wrong'
-    };
-    voiceStatusEl.textContent = labels[state] || '';
-    if(subtext !== undefined) voiceSubEl.textContent = subtext;
-    const showStart = (state === 'idle' || state === 'error');
-    voiceStartBtn.style.display = showStart ? 'flex' : 'none';
-    voiceActiveControls.style.display = showStart ? 'none' : 'flex';
-  }
-
-  function playVoiceChunk(base64Audio){
-    if(!voicePlaybackCtx){
-      voicePlaybackCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: VOICE_SAMPLE_RATE });
-      voiceNextPlayTime = 0;
-    }
-    const float32 = base64ToFloat32(base64Audio);
-    if(!float32.length) return;
-    const buffer = voicePlaybackCtx.createBuffer(1, float32.length, VOICE_SAMPLE_RATE);
-    buffer.copyToChannel(float32, 0);
-    const src = voicePlaybackCtx.createBufferSource();
-    src.buffer = buffer;
-    src.connect(voicePlaybackCtx.destination);
-    const now = voicePlaybackCtx.currentTime;
-    const startAt = Math.max(now, voiceNextPlayTime);
-    src.start(startAt);
-    voiceNextPlayTime = startAt + buffer.duration;
-  }
-
-  function addVoiceTranscriptLine(who, text){
-    if(!text) return;
-    const line = document.createElement('div');
-    line.className = 'vt-line';
-    const b = document.createElement('b');
-    b.textContent = who + ': ';
-    line.appendChild(b);
-    line.appendChild(document.createTextNode(text));
-    voiceTranscriptEl.appendChild(line);
-    voiceTranscriptEl.scrollTop = voiceTranscriptEl.scrollHeight;
-  }
-
-  function startMicStreaming(){
-    voiceAudioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: VOICE_SAMPLE_RATE });
-    voiceMicSource = voiceAudioCtx.createMediaStreamSource(voiceMicStream);
-    voiceProcessor = voiceAudioCtx.createScriptProcessor(4096, 1, 1);
-    voiceMicSource.connect(voiceProcessor);
-    voiceProcessor.connect(voiceAudioCtx.destination);
-    voiceProcessor.onaudioprocess = (e) => {
-      if(voiceMuted || !voiceWs || voiceWs.readyState !== WebSocket.OPEN) return;
-      const input = e.inputBuffer.getChannelData(0);
-      voiceWs.send(JSON.stringify({ type: 'input_audio_buffer.append', audio: base64EncodePCM16(input) }));
-    };
-  }
-
-  function handleVoiceEvent(msg){
-    switch(msg.type){
-      case 'input_audio_buffer.speech_started':
-        setVoiceState('listening', "Go ahead, I'm listening.");
-        break;
-      case 'input_audio_buffer.speech_stopped':
-        setVoiceState('speaking', 'Thinking…');
-        break;
-      case 'response.audio.delta':
-      case 'response.output_audio.delta':
-        if(msg.delta){ playVoiceChunk(msg.delta); setVoiceState('speaking', 'Speaking…'); }
-        break;
-      case 'response.audio_transcript.delta':
-      case 'response.output_audio_transcript.delta':
-        voicePendingAssistantText += (msg.delta || '');
-        break;
-      case 'response.audio_transcript.done':
-      case 'response.output_audio_transcript.done':
-        if(voicePendingAssistantText){ addVoiceTranscriptLine('Nuru', voicePendingAssistantText); voicePendingAssistantText = ''; }
-        break;
-      case 'conversation.item.input_audio_transcription.completed':
-        if(msg.transcript) addVoiceTranscriptLine('You', msg.transcript);
-        break;
-      case 'response.done':
-        if(voiceState !== 'error') setVoiceState('listening', "Go ahead, I'm listening.");
-        break;
-      case 'error':
-        console.error('voice error event', msg);
-        setVoiceState('error', (msg.error && msg.error.message) || 'The voice service reported an error.');
-        break;
-    }
-  }
-
-  async function startVoiceCall(){
-    if(!currentUser){ pendingVoiceStart = true; openAuthSheet(); return; }
-    if(voiceState !== 'idle' && voiceState !== 'error') return;
-    if(!getVoiceSession){
-      setVoiceState('error', "Voice isn't set up yet — the createVoiceSession function needs to be deployed.");
-      return;
-    }
-    setVoiceState('connecting', 'Requesting microphone access…');
-    try{
-      voiceMicStream = await navigator.mediaDevices.getUserMedia({
-        audio: { channelCount: 1, sampleRate: VOICE_SAMPLE_RATE, echoCancellation: true, noiseSuppression: true }
-      });
-    }catch(err){
-      console.error(err);
-      setVoiceState('error', "Couldn't access your microphone — check your browser's permissions.");
-      return;
-    }
-    try{
-      setVoiceState('connecting', 'Connecting to Grok Voice…');
-      const result = await getVoiceSession();
-      const token = result && result.data && result.data.value;
-      if(!token) throw new Error('No voice session token returned.');
-      // Connects to the "Nuru" voice agent configured in the xAI console
-      // (Deployment tab → Code integration). Its voice + instructions live
-      // there now, not in this file — that's the source of truth.
-      const ws = new WebSocket('wss://api.x.ai/v1/realtime?agent_id=agent_J3P3EvFzWeJKy4F2', ['xai-client-secret.' + token]);
-      voiceWs = ws;
-      ws.addEventListener('open', () => {
-        ws.send(JSON.stringify({
-          type: 'session.update',
-          session: {
-            turn_detection: { type: 'server_vad' }
-          }
-        }));
-        startMicStreaming();
-        setVoiceState('listening', "Go ahead, I'm listening.");
-      });
-      ws.addEventListener('message', (event) => {
-        let msg;
-        try{ msg = JSON.parse(event.data); }catch(e){ return; }
-        handleVoiceEvent(msg);
-      });
-      ws.addEventListener('close', () => {
-        if(voiceState !== 'idle') stopVoiceCall(false);
-      });
-      ws.addEventListener('error', (err) => {
-        console.error('voice ws error', err);
-        setVoiceState('error', 'Lost connection to the voice service.');
-      });
-    }catch(err){
-      console.error(err);
-      setVoiceState('error', (err && err.message) ? err.message : 'Could not start the voice call.');
-      if(voiceMicStream){ voiceMicStream.getTracks().forEach(t => t.stop()); voiceMicStream = null; }
-    }
-  }
-
-  function stopVoiceCall(sendClose){
-    if(voiceWs){
-      if(sendClose !== false){ try{ voiceWs.close(); }catch(e){} }
-      voiceWs = null;
-    }
-    if(voiceProcessor){ voiceProcessor.disconnect(); voiceProcessor.onaudioprocess = null; voiceProcessor = null; }
-    if(voiceMicSource){ voiceMicSource.disconnect(); voiceMicSource = null; }
-    if(voiceAudioCtx){ voiceAudioCtx.close().catch(() => {}); voiceAudioCtx = null; }
-    if(voiceMicStream){ voiceMicStream.getTracks().forEach(t => t.stop()); voiceMicStream = null; }
-    if(voicePlaybackCtx){ voicePlaybackCtx.close().catch(() => {}); voicePlaybackCtx = null; }
-    voiceNextPlayTime = 0;
-    voiceMuted = false;
-    voicePendingAssistantText = '';
-    voiceMuteBtn.classList.remove('muted');
-    setVoiceState('idle', 'Tap to start a live voice conversation, powered by Grok Voice.');
-  }
-
-  function toggleVoiceMute(){
-    voiceMuted = !voiceMuted;
-    voiceMuteBtn.classList.toggle('muted', voiceMuted);
-    voiceMuteBtn.title = voiceMuted ? 'Unmute' : 'Mute';
-  }
-
-  voiceStartBtn.addEventListener('click', startVoiceCall);
-  voiceEndBtn.addEventListener('click', () => stopVoiceCall());
-  voiceMuteBtn.addEventListener('click', toggleVoiceMute);
-
   sendBtn.addEventListener('click', handleSend);
   inputEl.addEventListener('keydown', (e) => {
     if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); handleSend(); }
@@ -1557,7 +1172,6 @@
       const firebaseApp = initializeApp(firebaseConfig);
       const functions = getFunctions(firebaseApp);
       chatWithNuru = httpsCallable(functions, 'chatWithNuru');
-      getVoiceSession = httpsCallable(functions, 'createVoiceSession');
       auth = getAuth(firebaseApp);
       db = getFirestore(firebaseApp);
       let authInitialized = false;
@@ -1568,7 +1182,6 @@
           subscribeHistory(user.uid);
         }else{
           unsubscribeHistory();
-          if(voiceState !== 'idle') stopVoiceCall();
           if(authInitialized) resetToNewChat();
         }
         authInitialized = true;
