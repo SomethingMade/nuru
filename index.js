@@ -71,3 +71,47 @@ exports.chatWithNuru = onCall(
     return { text };
   }
 );
+
+// ============================================================
+// Voice — mints a short-lived xAI "ephemeral token" so the browser can
+// open a Grok Voice Agent WebSocket directly without ever seeing the
+// real XAI_API_KEY. The client calls this once per voice session and
+// uses the returned token as the WebSocket subprotocol
+// (`xai-client-secret.<token>`) — same key-never-leaves-the-server
+// pattern as chatWithNuru.
+//
+// Docs: https://docs.x.ai/developers/model-capabilities/audio/ephemeral-tokens
+// ============================================================
+
+exports.createVoiceSession = onCall(
+  { secrets: [XAI_API_KEY], cors: true },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in to start a voice chat.");
+    }
+
+    let response;
+    try {
+      response = await fetch("https://api.x.ai/v1/realtime/client_secrets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${XAI_API_KEY.value()}`,
+        },
+        // Short-lived on purpose — the client requests a fresh token
+        // each time it starts a new voice call.
+        body: JSON.stringify({ expires_after: { seconds: 300 } }),
+      });
+    } catch (err) {
+      throw new HttpsError("unavailable", "Could not reach the xAI API: " + err.message);
+    }
+
+    if (!response.ok) {
+      const errBody = await response.text();
+      throw new HttpsError("internal", `xAI API returned ${response.status}: ${errBody}`);
+    }
+
+    // Shape: { value: "<ephemeral token>", expires_at: <unix seconds>, ... }
+    return await response.json();
+  }
+);
