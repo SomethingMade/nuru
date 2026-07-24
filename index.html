@@ -233,23 +233,31 @@
   .model-picker-menu{
     display:none; position:absolute; bottom: calc(100% + 8px); left:0;
     background: var(--bg-card); border:1px solid var(--line); border-radius:12px;
-    padding:6px; min-width:200px;
+    padding:6px; min-width:216px;
     box-shadow: 0 14px 34px rgba(23,19,15,0.14);
     z-index:20;
   }
   .model-picker.open .model-picker-menu{ display:block; }
   .model-option{
-    display:flex; flex-direction:column; align-items:flex-start; gap:1px;
+    display:flex; align-items:center; gap:10px;
     width:100%; background:none; border:none; text-align:left;
-    padding: 7px 10px; border-radius:8px; cursor:pointer;
+    padding: 8px 10px; border-radius:8px; cursor:pointer;
   }
-  .model-option:hover{ background: var(--bg-card-hover); }
+  .model-option:hover:not(:disabled){ background: var(--bg-card-hover); }
+  .model-option:disabled{ cursor:default; opacity:0.5; }
+  .model-text{ display:flex; flex-direction:column; align-items:flex-start; gap:1px; }
   .model-option.active .model-name::after{
     content:''; display:inline-block; width:5px; height:5px; border-radius:50%;
     background: var(--accent); margin-left:6px; vertical-align:middle;
   }
   .model-name{ font-family: var(--font-display); font-weight:600; font-size:13px; color: var(--ink); }
   .model-desc{ font-family: var(--font-mono); font-size:10px; color: var(--ink-faint); letter-spacing:0.01em; }
+  .model-badge{
+    margin-left:auto; flex-shrink:0;
+    font-family: var(--font-mono); font-size:8.5px; text-transform:uppercase; letter-spacing:0.05em;
+    color: var(--ink-faint); background: var(--bg-card-hover); border:1px solid var(--line);
+    padding:2px 7px; border-radius:999px;
+  }
 
   .composer-row{ display:flex; align-items:flex-end; gap:10px; padding-left:8px; }
   .composer textarea{
@@ -303,7 +311,7 @@
     .composer-inner{ padding:8px 8px 8px; border-radius:20px; }
     .composer-toprow{ padding-left:6px; }
     .composer-row{ padding-left:6px; }
-    .model-picker-menu{ min-width:180px; }
+    .model-picker-menu{ min-width:194px; }
     .composer textarea{ font-size:16px; }
     .send-btn{ width:38px; height:38px; }
     .conn-banner{ margin:12px 14px 0; font-size:12.5px; }
@@ -413,21 +421,29 @@
         <div class="composer-toprow">
           <div class="model-picker" id="model-picker">
             <button class="model-picker-btn" id="model-picker-btn" type="button" aria-haspopup="true" aria-expanded="false">
-              <span id="model-picker-label">Grok 4.3</span>
+              <span id="model-picker-label">Grok</span>
               <svg viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="model-picker-menu" id="model-picker-menu">
-              <button class="model-option active" data-model="grok-4.3" data-label="Grok 4.3">
-                <span class="model-name">Grok 4.3</span>
-                <span class="model-desc">Balanced — everyday chat</span>
+              <button class="model-option active" data-model="grok-latest" data-label="Grok">
+                <span class="model-text">
+                  <span class="model-name">Grok</span>
+                  <span class="model-desc">xAI · latest model</span>
+                </span>
               </button>
-              <button class="model-option" data-model="grok-4.1-fast" data-label="Grok 4.1 Fast">
-                <span class="model-name">Grok 4.1 Fast</span>
-                <span class="model-desc">Fastest — quick answers</span>
+              <button class="model-option" data-model="gemini" data-label="Gemini" disabled>
+                <span class="model-text">
+                  <span class="model-name">Gemini</span>
+                  <span class="model-desc">Google · latest model</span>
+                </span>
+                <span class="model-badge">Soon</span>
               </button>
-              <button class="model-option" data-model="grok-4-heavy" data-label="Grok 4 Heavy">
-                <span class="model-name">Grok 4 Heavy</span>
-                <span class="model-desc">Deepest reasoning</span>
+              <button class="model-option" data-model="claude" data-label="Claude" disabled>
+                <span class="model-text">
+                  <span class="model-name">Claude</span>
+                  <span class="model-desc">Anthropic · latest model</span>
+                </span>
+                <span class="model-badge">Soon</span>
               </button>
             </div>
           </div>
@@ -464,13 +480,15 @@
   // Nuru's model, system instruction, and xAI API key all live server-side
   // in functions/index.js — this file only calls the "chatWithNuru" function.
   //
-  // The composer now sends a `model` field with each request (see
-  // chatWithNuru({ messages, model }) below) so the person can switch
-  // between Grok variants inline. For it to actually change which model
-  // answers, chatWithNuru in functions/index.js needs to read
-  // data.model and pass it through to the xAI chat completions call
-  // (falling back to a default if it's missing/unrecognized) — that
-  // file isn't part of this front-end and needs updating separately.
+  // The composer's model picker is now a provider switcher for the wrapper:
+  // Grok is live and sends model: 'grok-latest' with each request (see
+  // chatWithNuru({ messages, model }) below). Gemini and Claude are shown
+  // as disabled "Soon" options with no working backend yet — chatWithNuru
+  // in functions/index.js only ever calls xAI right now. Wiring up Gemini
+  // or Claude later means: (1) add their API calls server-side in
+  // functions/index.js, keyed off data.model ('gemini' / 'claude'), and
+  // (2) remove the `disabled` attribute from the matching .model-option
+  // button here once that backend path actually works.
   // ============================================================
 
   const hero = document.getElementById('hero');
@@ -495,7 +513,7 @@
   let conversation = [];
   let hasStarted = false;
   let ready = false;
-  let selectedModel = 'grok-4.3';
+  let selectedModel = 'grok-latest';
 
   function novaAvatar(){
     const div = document.createElement('div');
