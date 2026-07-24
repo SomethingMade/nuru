@@ -3,51 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#FAF8F4">
+<meta name="theme-color" content="#FAF9F5">
 <title>Nuru</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg-app: #FAF8F4;
-    --bg-sidebar: #F3EEE6;
-    --bg-hover: #EAE3D6;
-    --bg-user-bubble: #EFE7D8;
-    --line: #E4DCCB;
-    --ink: #33301F;
-    --ink-soft: #6B6553;
-    --ink-faint: #9C9580;
-    --accent: #C1683B;
-    --accent-soft: rgba(193,104,59,0.12);
+    --bg: #FAF9F5;
+    --bg-raised: #FFFFFF;
+    --bg-card: #FFFFFF;
+    --bg-card-hover: #F4F1EA;
+    --line: #E6E1D6;
+    --line-bright: #D2CABA;
+    --ink: #17130F;
+    --ink-dim: #5C5548;
+    --ink-faint: #968E7E;
+    --accent: #C4791F;
+    --accent-bright: #DE9536;
+    --accent-soft: rgba(196,121,31,0.10);
+    --accent-line: rgba(196,121,31,0.32);
+    --accent-text: #A8631A;
+    --user-bubble: #F1ECE1;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-mono: 'Space Mono', monospace;
   }
-  *{ box-sizing:border-box; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
   html,body{ height:100%; margin:0; }
   body{
     font-family:'Inter', sans-serif;
-    background: var(--bg-app);
+    background: var(--bg);
     color: var(--ink);
     display:flex;
     min-height:100vh;
-    min-height: 100dvh;
+    min-height:100dvh;
     overflow:hidden;
   }
   @media (prefers-reduced-motion: reduce){
     *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
   }
+  ::selection{ background: var(--accent-soft); color: var(--ink); }
 
-  /* ---------------- sidebar ---------------- */
-  .sidebar-overlay{
-    display:none;
-    position:fixed;
-    inset:0;
-    background: rgba(51,48,31,0.35);
-    z-index: 30;
-  }
+  /* ================= shared sunrise mark ================= */
+  .glyph .horizon{ stroke: var(--accent); opacity:0.45; stroke-linecap:round; }
+  .glyph .core{ fill: var(--accent); }
+  .glyph .ray line{ stroke: var(--accent); stroke-linecap:round; }
+  .glyph.pulsing .core{ animation: pulse 1.15s ease-in-out infinite; transform-box: fill-box; transform-origin:center; }
+  .glyph.pulsing .ray{ animation: raypulse 1.15s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:0.7; transform:scale(1.12);} }
+  @keyframes raypulse{ 0%,100%{ opacity:0.4;} 50%{ opacity:1;} }
+
+  /* ================= sidebar (desktop) ================= */
+  .sidebar-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:30; }
   .sidebar-overlay.active{ display:block; }
 
   .sidebar{
-    width: 260px;
-    background: var(--bg-sidebar);
+    width: 264px;
+    background: var(--bg-raised);
     border-right: 1px solid var(--line);
     display:flex;
     flex-direction:column;
@@ -56,307 +67,246 @@
     padding-top: max(16px, env(safe-area-inset-top));
     transition: transform .2s ease;
   }
-  .menu-btn{
-    display:none;
-    background:none;
-    border:1px solid var(--line);
-    color: var(--ink-soft);
-    width:38px; height:38px;
-    border-radius:9px;
-    align-items:center; justify-content:center;
-    cursor:pointer;
-    flex-shrink:0;
-    margin-right: 10px;
-  }
-  .brand{
-    display:flex; align-items:center; gap:9px;
-    padding: 6px 8px 18px;
-  }
-  .brand .mark{ width:20px; height:20px; flex-shrink:0; }
-  .brand .mark .core{ fill: var(--accent); }
-  .brand .mark .ray{ stroke: var(--accent); stroke-width:1.6; }
-  .brand .mark .horizon{ stroke: var(--accent); opacity:0.4; stroke-width:1.3; stroke-linecap:round; }
-  .brand span{
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    font-size: 16.5px;
-  }
+  .brand{ display:flex; align-items:center; gap:9px; padding: 6px 8px 20px; }
+  .brand svg{ width:22px; height:22px; flex-shrink:0; }
+  .brand span{ font-family: var(--font-display); font-weight:700; font-size:16px; letter-spacing:0.06em; text-transform:uppercase; }
   .new-chat{
     display:flex; align-items:center; gap:8px;
-    background: #fff;
+    background: var(--bg-card);
     border: 1px solid var(--line);
     color: var(--ink);
-    padding: 9px 12px;
-    border-radius: 9px;
-    font-size: 13.5px;
-    font-weight:500;
+    padding: 10px 13px;
+    border-radius: 10px;
+    font-size: 13.5px; font-weight:500;
     cursor:pointer;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
     transition: border-color .15s, background .15s;
   }
-  .new-chat:hover{ border-color: var(--accent); background: var(--accent-soft); }
-  .history-label{
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--ink-faint);
-    padding: 4px 8px 8px;
-  }
+  .new-chat:hover{ border-color: var(--accent-line); background: var(--bg-card-hover); }
+  .history-label{ font-size:11px; text-transform:uppercase; letter-spacing:0.07em; color: var(--ink-faint); padding: 4px 8px 8px; }
   .history-list{ flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:2px; }
-  .history-item{
-    padding: 8px 10px;
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--ink-soft);
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    cursor:pointer;
-  }
-  .history-item:hover{ background: var(--bg-hover); }
-  .history-item.active{ background: var(--bg-hover); color: var(--ink); font-weight:500; }
-  .sidebar-footer{
-    border-top: 1px solid var(--line);
-    padding-top: 12px;
-    font-size: 12px;
-    color: var(--ink-faint);
-    padding-left: 8px;
-  }
+  .history-item{ padding: 9px 10px; border-radius:8px; font-size:13px; color: var(--ink-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+  .history-item:hover{ background: var(--bg-card); }
+  .history-item.active{ background: var(--bg-card); color: var(--ink); font-weight:500; }
+  .sidebar-footer{ border-top:1px solid var(--line); padding-top:12px; font-size:10.5px; color: var(--ink-faint); padding-left:8px; font-family: var(--font-mono); text-transform:uppercase; letter-spacing:0.05em; }
 
-  /* ---------------- main ---------------- */
-  main{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    min-width:0;
-  }
+  /* ================= main ================= */
+  main{ flex:1; display:flex; flex-direction:column; min-width:0; position:relative; }
+
   .topbar{
     display:flex; align-items:center;
     padding: 14px 22px;
     padding-top: max(14px, env(safe-area-inset-top));
     border-bottom: 1px solid var(--line);
     flex-shrink:0;
+    z-index: 5;
   }
-  .topbar .model-pill{
-    font-size: 12.5px;
-    color: var(--ink-soft);
-    background: var(--bg-sidebar);
-    border: 1px solid var(--line);
-    padding: 5px 12px;
-    border-radius: 999px;
-    display:flex; align-items:center; gap:7px;
+  .menu-btn{
+    display:none; background:none; border:1px solid var(--line); color: var(--ink-dim);
+    width:38px; height:38px; border-radius:9px; align-items:center; justify-content:center;
+    cursor:pointer; flex-shrink:0; margin-right:10px;
   }
-  .mark.small{ width:13px; height:13px; }
-  .mark.small .core{ fill: var(--accent); }
-  .mark.small .ray{ stroke: var(--accent); stroke-width:2; }
-  .mark.small .horizon{ stroke: var(--accent); opacity:0.4; stroke-width:1.3; stroke-linecap:round; }
-  .mark .core{ transform-box: fill-box; transform-origin: center; }
-  .mark.thinking .core{ animation: pulse 1.1s ease-in-out infinite; }
-  .mark.thinking .ray{ animation: raypulse 1.1s ease-in-out infinite; }
-  @keyframes pulse{ 0%,100%{ opacity:1; transform: scale(1);} 50%{ opacity:0.7; transform: scale(1.1);} }
-  @keyframes raypulse{ 0%,100%{ opacity:0.45;} 50%{ opacity:1;} }
 
-  /* ---------------- empty state ---------------- */
-  .empty-state{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding: 24px;
+  /* ================= hero (first screen) ================= */
+  .hero{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center;
+    padding: 32px 24px;
+    background:
+      radial-gradient(60% 45% at 50% 32%, rgba(196,121,31,0.16) 0%, rgba(196,121,31,0) 70%),
+      var(--bg);
+    z-index: 4;
+    transition: opacity .35s ease, visibility .35s ease;
   }
-  .empty-state .mark.big{ width:44px; height:44px; margin-bottom:18px; }
-  .empty-state .mark.big .core{ fill: var(--accent); }
-  .empty-state .mark.big .ray{ stroke: var(--accent); stroke-width:1.4; }
-  .empty-state .mark.big .horizon{ stroke: var(--accent); opacity:0.4; stroke-width:1.1; stroke-linecap:round; }
-  .empty-state h1{
-    font-family:'Fraunces', serif;
-    font-weight:500;
-    font-size: 28px;
-    margin: 0 0 8px;
+  .hero.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+  .hero-glow{
+    width: 108px; height:108px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background: radial-gradient(circle, rgba(196,121,31,0.28) 0%, rgba(196,121,31,0.06) 55%, transparent 75%);
+    margin-bottom: 26px;
   }
-  .empty-state p{
-    color: var(--ink-soft);
-    font-size: 14.5px;
-    max-width: 380px;
-    line-height:1.55;
-    margin: 0 0 26px;
+  .hero-glow svg{ width:56px; height:56px; }
+  .hero h1{
+    font-family: var(--font-display); font-weight:700; font-style:normal;
+    font-size: 36px; margin: 0 0 10px; letter-spacing:-0.01em;
   }
-  .suggestion-row{
-    display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
-    max-width: 560px;
+  .hero p.tagline{
+    color: var(--ink-dim); font-size:15px; line-height:1.6;
+    max-width: 320px; margin: 0 0 32px;
   }
-  .suggestion{
-    background:#fff;
-    border:1px solid var(--line);
-    padding: 10px 15px;
-    border-radius: 10px;
-    font-size: 13px;
-    color: var(--ink-soft);
+  .hero p.tagline b{ color: var(--ink); font-weight:600; }
+  .cta{
+    background: linear-gradient(180deg, var(--accent-bright), var(--accent));
+    color: #221605;
+    border:none; padding: 13px 30px; border-radius: 999px;
+    font-family: var(--font-display); font-weight:600; font-size:13.5px;
+    text-transform:uppercase; letter-spacing:0.05em;
     cursor:pointer;
-    transition: border-color .15s, color .15s;
+    box-shadow: 0 8px 24px rgba(196,121,31,0.25);
+    transition: transform .12s, box-shadow .12s;
   }
-  .suggestion:hover{ border-color: var(--accent); color: var(--ink); }
+  .cta:hover{ transform: translateY(-1px); box-shadow: 0 10px 30px rgba(196,121,31,0.35); }
 
-  /* ---------------- messages ---------------- */
-  .messages{
-    flex:1;
-    overflow-y:auto;
-    display:flex;
-    flex-direction:column;
-    display:none;
+  /* ================= empty state (quick actions) ================= */
+  .empty-state{
+    flex:1; display:none; flex-direction:column; align-items:center; justify-content:center;
+    padding: 24px; text-align:center;
+    background: radial-gradient(50% 35% at 50% 12%, rgba(196,121,31,0.08) 0%, rgba(196,121,31,0) 70%), var(--bg);
   }
-  .messages.active{ display:flex; }
-  .messages-inner{
-    max-width: 700px;
-    width:100%;
-    margin: 0 auto;
-    padding: 28px 24px 12px;
-    display:flex;
-    flex-direction:column;
-    gap: 26px;
+  .empty-state.active{ display:flex; }
+  .empty-mark{ width:38px; height:38px; margin-bottom:16px; }
+  .empty-state h2{ font-family: var(--font-display); font-weight:600; font-size:25px; margin:0 0 8px; letter-spacing:-0.005em; }
+  .empty-state p{ color: var(--ink-dim); font-size:14px; max-width:340px; line-height:1.55; margin:0 0 28px; }
+
+  .action-grid{
+    display:grid; grid-template-columns: 1fr 1fr; gap:12px;
+    max-width: 480px; width:100%;
   }
-  .msg{ display:flex; gap:13px; }
-  .msg.user{ justify-content:flex-end; }
-  .msg.user .content{
-    background: var(--bg-user-bubble);
-    padding: 10px 15px;
+  .action-card{
+    background: var(--bg-card);
+    border: 1px solid var(--line);
     border-radius: 14px;
-    max-width: 78%;
+    padding: 16px 15px;
+    text-align:left;
+    cursor:pointer;
+    transition: border-color .15s, background .15s, transform .12s;
   }
+  .action-card:hover{ border-color: var(--accent-line); background: var(--bg-card-hover); transform: translateY(-1px); }
+  .action-card svg{ width:19px; height:19px; margin-bottom:10px; }
+  .action-card .title{ font-size:13.5px; font-weight:600; color: var(--ink); margin-bottom:3px; }
+  .action-card .sub{ font-size:12px; color: var(--ink-faint); line-height:1.4; }
+
+  /* ================= messages ================= */
+  .messages{ flex:1; overflow-y:auto; display:none; flex-direction:column; }
+  .messages.active{ display:flex; }
+  .messages-inner{ max-width: 700px; width:100%; margin:0 auto; padding: 26px 24px 12px; display:flex; flex-direction:column; gap:24px; }
+
+  .msg{ display:flex; gap:12px; }
+  .msg.user{ justify-content:flex-end; }
+  .msg.user .content{ background: var(--user-bubble); border:1px solid var(--line); padding:10px 15px; border-radius:14px; max-width:78%; }
   .msg.nova{ align-items:flex-start; }
   .msg.nova .avatar{
-    width:26px; height:26px; border-radius:7px;
-    background: var(--accent-soft);
-    border: 1px solid rgba(193,104,59,0.35);
-    display:flex; align-items:center; justify-content:center;
-    flex-shrink:0; margin-top:2px;
+    width:26px; height:26px; border-radius:8px;
+    background: var(--accent-soft); border:1px solid var(--accent-line);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;
   }
-  .msg.nova .avatar .mark{ width:14px; height:14px; }
-  .msg.nova .avatar .mark .core{ fill: var(--accent); }
-  .msg.nova .avatar .mark .ray{ stroke: var(--accent); stroke-width:2.2; }
-  .msg.nova .avatar .mark .horizon{ stroke: var(--accent); opacity:0.4; stroke-width:1.4; stroke-linecap:round; }
-  .msg .content{
-    font-size: 14.5px;
-    line-height: 1.65;
-    white-space: pre-wrap;
-  }
+  .msg.nova .avatar svg{ width:14px; height:14px; }
+  .msg .content{ font-size:14.5px; line-height:1.65; white-space:pre-wrap; color: var(--ink); }
   .msg.nova .content{ padding-top:3px; }
 
-  .typing-dots{ display:flex; gap:4px; padding: 6px 0; }
-  .typing-dots span{
-    width:5px; height:5px; border-radius:50%; background: var(--ink-faint);
-    animation: bounce 1.2s infinite ease-in-out;
-  }
+  .typing-dots{ display:flex; gap:4px; padding:6px 0; }
+  .typing-dots span{ width:5px; height:5px; border-radius:50%; background: var(--ink-faint); animation: bounce 1.2s infinite ease-in-out; }
   .typing-dots span:nth-child(2){ animation-delay:.15s; }
   .typing-dots span:nth-child(3){ animation-delay:.3s; }
   @keyframes bounce{ 0%,60%,100%{ transform:translateY(0); opacity:.5;} 30%{ transform:translateY(-4px); opacity:1;} }
 
-  /* ---------------- composer ---------------- */
-  .composer-area{
-    padding: 14px 24px 22px;
-    padding-bottom: max(22px, env(safe-area-inset-bottom));
-    flex-shrink:0;
-  }
-  .composer{
-    max-width: 700px;
-    margin: 0 auto;
-  }
+  /* ================= composer ================= */
+  .composer-area{ padding: 14px 24px 22px; padding-bottom: max(22px, env(safe-area-inset-bottom)); flex-shrink:0; }
+  .composer{ max-width:700px; margin:0 auto; }
   .composer-inner{
-    display:flex;
-    align-items:flex-end;
-    gap:10px;
-    background: #fff;
+    display:flex; flex-direction:column;
+    background: var(--bg-raised);
     border: 1px solid var(--line);
     border-radius: 22px;
-    padding: 10px 10px 10px 18px;
-    box-shadow: 0 1px 3px rgba(51,48,31,0.05);
-    transition: border-color .15s;
+    padding: 9px 10px 10px;
+    transition: border-color .15s, box-shadow .15s;
   }
-  .composer-inner:focus-within{ border-color: var(--accent); }
+  .composer-inner:focus-within{ border-color: var(--accent-line); box-shadow: 0 0 0 3px rgba(196,121,31,0.08); }
+
+  .composer-toprow{ display:flex; align-items:center; padding: 0 4px 7px 8px; }
+
+  .model-picker{ position:relative; }
+  .model-picker-btn{
+    display:flex; align-items:center; gap:5px;
+    background:none; border:1px solid var(--line); color: var(--ink-dim);
+    font-family: var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.04em;
+    padding: 5px 10px; border-radius:999px; cursor:pointer;
+    transition: border-color .15s, background .15s, color .15s;
+  }
+  .model-picker-btn:hover{ border-color: var(--accent-line); background: var(--bg-card-hover); color: var(--ink); }
+  .model-picker-btn svg{ width:8px; height:8px; flex-shrink:0; transition: transform .15s; }
+  .model-picker.open .model-picker-btn{ border-color: var(--accent-line); color: var(--ink); background: var(--bg-card-hover); }
+  .model-picker.open .model-picker-btn svg{ transform: rotate(180deg); }
+
+  .model-picker-menu{
+    display:none; position:absolute; bottom: calc(100% + 8px); left:0;
+    background: var(--bg-card); border:1px solid var(--line); border-radius:12px;
+    padding:6px; min-width:200px;
+    box-shadow: 0 14px 34px rgba(23,19,15,0.14);
+    z-index:20;
+  }
+  .model-picker.open .model-picker-menu{ display:block; }
+  .model-option{
+    display:flex; flex-direction:column; align-items:flex-start; gap:1px;
+    width:100%; background:none; border:none; text-align:left;
+    padding: 7px 10px; border-radius:8px; cursor:pointer;
+  }
+  .model-option:hover{ background: var(--bg-card-hover); }
+  .model-option.active .model-name::after{
+    content:''; display:inline-block; width:5px; height:5px; border-radius:50%;
+    background: var(--accent); margin-left:6px; vertical-align:middle;
+  }
+  .model-name{ font-family: var(--font-display); font-weight:600; font-size:13px; color: var(--ink); }
+  .model-desc{ font-family: var(--font-mono); font-size:10px; color: var(--ink-faint); letter-spacing:0.01em; }
+
+  .composer-row{ display:flex; align-items:flex-end; gap:10px; padding-left:8px; }
   .composer textarea{
-    flex:1;
-    border:none; outline:none; background:none;
-    resize:none;
-    font-family:'Inter',sans-serif;
-    font-size: 14.5px;
-    line-height:1.5;
-    max-height: 160px;
-    padding: 6px 0;
-    color: var(--ink);
+    flex:1; border:none; outline:none; background:none; resize:none;
+    font-family:'Inter',sans-serif; font-size:14.5px; line-height:1.5;
+    max-height:160px; padding:6px 0; color: var(--ink);
   }
   .composer textarea::placeholder{ color: var(--ink-faint); }
   .send-btn{
-    background: var(--accent);
-    border:none;
-    width:34px; height:34px;
-    border-radius: 50%;
+    background: linear-gradient(180deg, var(--accent-bright), var(--accent));
+    border:none; width:34px; height:34px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
-    cursor:pointer;
-    flex-shrink:0;
+    cursor:pointer; flex-shrink:0;
     transition: transform .12s, opacity .12s;
   }
   .send-btn:hover{ transform: translateY(-1px); }
-  .send-btn:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
-  .composer-hint{
-    text-align:center; font-size:11.5px; color: var(--ink-faint); margin-top:9px;
-  }
+  .send-btn:disabled{ opacity:.35; cursor:not-allowed; transform:none; }
+  .composer-hint{ text-align:center; font-size:10px; color: var(--ink-faint); margin-top:9px; font-family: var(--font-mono); text-transform:uppercase; letter-spacing:0.04em; }
 
-  /* ---------------- connection error banner ---------------- */
   .conn-banner{
-    display:none;
-    margin: 14px 24px 0;
-    max-width: 700px;
-    align-self:center;
-    background: #FBEDE7;
-    border: 1px solid rgba(193,104,59,0.35);
-    color: #8A4223;
-    padding: 11px 15px;
-    border-radius: 10px;
-    font-size: 13px;
-    line-height:1.5;
+    display:none; margin: 14px 24px 0; max-width:700px; align-self:center;
+    background: rgba(196,121,31,0.1); border:1px solid var(--accent-line); color: var(--accent-text);
+    padding: 11px 15px; border-radius:10px; font-size:13px; line-height:1.5;
   }
 
-  /* ---------------- mobile ---------------- */
+  /* ================= mobile ================= */
   @media (max-width: 768px){
     .menu-btn{ display:flex; }
+    .sidebar{ position:fixed; top:0; left:0; bottom:0; z-index:40; transform:translateX(-100%); box-shadow: 8px 0 30px rgba(0,0,0,0.18); width:min(280px, 82vw); }
+    .sidebar.open{ transform:translateX(0); }
 
-    .sidebar{
-      position: fixed;
-      top:0; left:0; bottom:0;
-      z-index: 40;
-      transform: translateX(-100%);
-      box-shadow: 8px 0 24px rgba(51,48,31,0.12);
-      width: min(280px, 82vw);
-    }
-    .sidebar.open{ transform: translateX(0); }
+    .topbar{ padding:12px 14px; padding-top: max(12px, env(safe-area-inset-top)); }
 
-    .topbar{ padding: 12px 14px; padding-top: max(12px, env(safe-area-inset-top)); }
-    .topbar .model-pill{ font-size:12px; padding:5px 10px; }
+    .hero h1{ font-size:29px; }
+    .hero p.tagline{ font-size:13.5px; }
+    .hero-glow{ width:88px; height:88px; }
+    .hero-glow svg{ width:46px; height:46px; }
 
-    .empty-state{ padding: 20px 16px; }
-    .empty-state h1{ font-size: 23px; }
-    .empty-state p{ font-size: 13.5px; margin-bottom:20px; }
-    .empty-state .mark.big{ width:36px; height:36px; margin-bottom:14px; }
-    .suggestion-row{ gap:8px; }
-    .suggestion{ font-size:12.5px; padding:9px 13px; }
+    .empty-state{ padding:20px 16px; }
+    .empty-state h2{ font-size:21px; }
+    .empty-state p{ font-size:13px; margin-bottom:20px; }
+    .action-grid{ grid-template-columns: 1fr; }
+    .action-card{ padding:14px; }
 
-    .messages-inner{ padding: 18px 14px 8px; gap:20px; }
-    .msg{ max-width: 100%; }
-    .msg.user .content{ max-width: 88%; }
+    .messages-inner{ padding:18px 14px 8px; gap:20px; }
+    .msg{ max-width:100%; }
+    .msg.user .content{ max-width:88%; }
     .msg .content{ font-size:15px; }
 
-    .composer-area{ padding: 10px 12px 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); }
-    .composer-inner{ padding: 8px 8px 8px 16px; border-radius:20px; }
-    .composer textarea{ font-size:16px; } /* 16px prevents iOS auto-zoom on focus */
-    .send-btn{ width:38px; height:38px; } /* comfortable touch target */
-
-    .conn-banner{ margin: 12px 14px 0; font-size:12.5px; }
-  }
-
-  @media (max-width: 420px){
-    .empty-state h1{ font-size: 21px; }
-    .suggestion-row{ flex-direction:column; align-items:stretch; }
-    .suggestion{ text-align:left; }
+    .composer-area{ padding:10px 12px 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+    .composer-inner{ padding:8px 8px 8px; border-radius:20px; }
+    .composer-toprow{ padding-left:6px; }
+    .composer-row{ padding-left:6px; }
+    .model-picker-menu{ min-width:180px; }
+    .composer textarea{ font-size:16px; }
+    .send-btn{ width:38px; height:38px; }
+    .conn-banner{ margin:12px 14px 0; font-size:12.5px; }
   }
 </style>
 </head>
@@ -366,27 +316,23 @@
 
 <aside class="sidebar" id="sidebar">
   <div class="brand">
-    <div class="mark">
-      <svg viewBox="0 0 20 20">
-        <line class="horizon" x1="2" y1="15" x2="18" y2="15"/>
-        <path class="core" d="M4 14 A6 6 0 0 1 16 14 Z"/>
-        <g class="ray" fill="none">
-          <line x1="5.6" y1="8.6" x2="4.5" y2="6.2"/>
-          <line x1="10" y1="6.8" x2="10" y2="4.1"/>
-          <line x1="14.4" y1="8.6" x2="15.5" y2="6.2"/>
-        </g>
-      </svg>
-    </div>
+    <svg class="glyph" viewBox="0 0 20 20">
+      <line class="horizon" x1="2" y1="15" x2="18" y2="15" stroke-width="1.3"/>
+      <path class="core" d="M4 14 A6 6 0 0 1 16 14 Z"/>
+      <g class="ray" fill="none">
+        <line x1="5.6" y1="8.6" x2="4.5" y2="6.2" stroke-width="1.6"/>
+        <line x1="10" y1="6.8" x2="10" y2="4.1" stroke-width="1.6"/>
+        <line x1="14.4" y1="8.6" x2="15.5" y2="6.2" stroke-width="1.6"/>
+      </g>
+    </svg>
     <span>Nuru</span>
   </div>
-  <div class="new-chat" id="new-chat-btn">
-    <span>＋</span> New chat
-  </div>
+  <div class="new-chat" id="new-chat-btn"><span>＋</span> New chat</div>
   <div class="history-label">Recent</div>
   <div class="history-list" id="history-list">
     <div class="history-item active" id="current-history-item">New conversation</div>
   </div>
-  <div class="sidebar-footer">Nuru · Firebase AI Logic</div>
+  <div class="sidebar-footer">Nuru · via xAI</div>
 </aside>
 
 <main>
@@ -394,43 +340,64 @@
     <button class="menu-btn" id="menu-btn" aria-label="Open menu">
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 4.5H16M2 9H16M2 13.5H16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
     </button>
-    <div class="model-pill">
-      <div class="mark small" id="mark">
-        <svg viewBox="0 0 20 20">
-          <line class="horizon" x1="2" y1="15" x2="18" y2="15"/>
-          <path class="core" d="M4 14 A6 6 0 0 1 16 14 Z"/>
-          <g class="ray" fill="none">
-            <line x1="5.6" y1="8.6" x2="4.5" y2="6.2"/>
-            <line x1="10" y1="6.8" x2="10" y2="4.1"/>
-            <line x1="14.4" y1="8.6" x2="15.5" y2="6.2"/>
-          </g>
-        </svg>
-      </div>
-      <span id="status-text">connecting…</span>
-    </div>
   </div>
 
-  <div class="empty-state" id="empty-state">
-    <div class="mark big">
-      <svg viewBox="0 0 20 20">
-        <line class="horizon" x1="1.5" y1="15" x2="18.5" y2="15"/>
+  <!-- HERO / FIRST SCREEN -->
+  <div class="hero" id="hero">
+    <div class="hero-glow">
+      <svg class="glyph pulsing" viewBox="0 0 20 20">
+        <line class="horizon" x1="1.5" y1="15" x2="18.5" y2="15" stroke-width="1"/>
         <path class="core" d="M4 14 A6 6 0 0 1 16 14 Z"/>
         <g class="ray" fill="none">
-          <line x1="5.6" y1="8.6" x2="4.5" y2="6.2"/>
-          <line x1="10" y1="6.8" x2="10" y2="4.1"/>
-          <line x1="14.4" y1="8.6" x2="15.5" y2="6.2"/>
-          <line x1="2.6" y1="11" x2="0.8" y2="9.8"/>
-          <line x1="17.4" y1="11" x2="19.2" y2="9.8"/>
+          <line x1="5.6" y1="8.6" x2="4.5" y2="6.2" stroke-width="1.2"/>
+          <line x1="10" y1="6.8" x2="10" y2="4.1" stroke-width="1.2"/>
+          <line x1="14.4" y1="8.6" x2="15.5" y2="6.2" stroke-width="1.2"/>
+          <line x1="2.6" y1="11" x2="0.8" y2="9.8" stroke-width="1.2"/>
+          <line x1="17.4" y1="11" x2="19.2" y2="9.8" stroke-width="1.2"/>
         </g>
       </svg>
     </div>
-    <h1>What's on your mind?</h1>
-    <p>I'm Nuru. Ask me anything, or start from one of these.</p>
-    <div class="suggestion-row">
-      <div class="suggestion" data-prompt="Give me a quick overview of what you can help with.">What can you help with?</div>
-      <div class="suggestion" data-prompt="Help me think through a decision I'm stuck on.">Help me think through a decision</div>
-      <div class="suggestion" data-prompt="Explain something complicated to me in simple terms.">Explain something to me</div>
-      <div class="suggestion" data-prompt="Give me writing feedback on something I'm working on.">Get writing feedback</div>
+    <h1>Meet Nuru.</h1>
+    <p class="tagline"><b>Nuru</b> means <i>light</i> in Swahili — your thinking companion, here whenever a conversation helps more than a search bar.</p>
+    <button class="cta" id="start-btn">Start chatting</button>
+  </div>
+
+  <!-- EMPTY STATE / QUICK ACTIONS -->
+  <div class="empty-state" id="empty-state">
+    <svg class="empty-mark glyph" viewBox="0 0 20 20">
+      <line class="horizon" x1="1.5" y1="15" x2="18.5" y2="15" stroke-width="1"/>
+      <path class="core" d="M4 14 A6 6 0 0 1 16 14 Z"/>
+      <g class="ray" fill="none">
+        <line x1="5.6" y1="8.6" x2="4.5" y2="6.2" stroke-width="1.3"/>
+        <line x1="10" y1="6.8" x2="10" y2="4.1" stroke-width="1.3"/>
+        <line x1="14.4" y1="8.6" x2="15.5" y2="6.2" stroke-width="1.3"/>
+        <line x1="2.6" y1="11" x2="0.8" y2="9.8" stroke-width="1.3"/>
+        <line x1="17.4" y1="11" x2="19.2" y2="9.8" stroke-width="1.3"/>
+      </g>
+    </svg>
+    <h2>What's on your mind?</h2>
+    <p>Ask anything, or start from one of these.</p>
+    <div class="action-grid">
+      <div class="action-card" data-prompt="Help me think through a decision I'm stuck on.">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="var(--accent)" stroke-width="1.4"/><path d="M10 6v4l3 2" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <div class="title">Think it through</div>
+        <div class="sub">Work through a decision together</div>
+      </div>
+      <div class="action-card" data-prompt="Explain something complicated to me in simple terms.">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 3a5 5 0 0 0-3 9c.5.4.7 1 .7 1.6v.4h4.6v-.4c0-.6.2-1.2.7-1.6a5 5 0 0 0-3-9Z" stroke="var(--accent)" stroke-width="1.4" stroke-linejoin="round"/><path d="M8.3 16.5h3.4M9 18h2" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <div class="title">Explain something</div>
+        <div class="sub">Break a topic down simply</div>
+      </div>
+      <div class="action-card" data-prompt="Give me writing feedback on something I'm working on.">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M4 16l1-3.5L13 4.5l2.5 2.5L7.5 15 4 16Z" stroke="var(--accent)" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        <div class="title">Writing feedback</div>
+        <div class="sub">Sharpen a draft or an email</div>
+      </div>
+      <div class="action-card" data-prompt="I have a quick question.">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h9A1.5 1.5 0 0 1 16 5.5v6a1.5 1.5 0 0 1-1.5 1.5H9l-3 3v-3H5.5A1.5 1.5 0 0 1 4 11.5v-6Z" stroke="var(--accent)" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        <div class="title">Quick question</div>
+        <div class="sub">Get a fast, clear answer</div>
+      </div>
     </div>
   </div>
 
@@ -443,10 +410,34 @@
   <div class="composer-area">
     <div class="composer">
       <div class="composer-inner">
-        <textarea id="input" placeholder="Message Nuru…" rows="1" disabled></textarea>
-        <button class="send-btn" id="send-btn" disabled title="Send">
-          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 8L14 2L9.5 14L7.5 9L2 8Z" fill="#fff"/></svg>
-        </button>
+        <div class="composer-toprow">
+          <div class="model-picker" id="model-picker">
+            <button class="model-picker-btn" id="model-picker-btn" type="button" aria-haspopup="true" aria-expanded="false">
+              <span id="model-picker-label">Grok 4.3</span>
+              <svg viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="model-picker-menu" id="model-picker-menu">
+              <button class="model-option active" data-model="grok-4.3" data-label="Grok 4.3">
+                <span class="model-name">Grok 4.3</span>
+                <span class="model-desc">Balanced — everyday chat</span>
+              </button>
+              <button class="model-option" data-model="grok-4.1-fast" data-label="Grok 4.1 Fast">
+                <span class="model-name">Grok 4.1 Fast</span>
+                <span class="model-desc">Fastest — quick answers</span>
+              </button>
+              <button class="model-option" data-model="grok-4-heavy" data-label="Grok 4 Heavy">
+                <span class="model-name">Grok 4 Heavy</span>
+                <span class="model-desc">Deepest reasoning</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="composer-row">
+          <textarea id="input" placeholder="Message Nuru…" rows="1" disabled></textarea>
+          <button class="send-btn" id="send-btn" disabled title="Send">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 8L14 2L9.5 14L7.5 9L2 8Z" fill="#221605"/></svg>
+          </button>
+        </div>
       </div>
       <div class="composer-hint">Nuru can make mistakes. Check important info.</div>
     </div>
@@ -459,7 +450,6 @@
 
   // ============================================================
   // YOUR FIREBASE PROJECT CONFIG
-  //    (Firebase console → Project settings → General → Your apps)
   // ============================================================
   const firebaseConfig = {
     apiKey: "AIzaSyBQSPwpVbGrdCuOoyitAeWQHIeipj2MgIY",
@@ -471,43 +461,54 @@
     appId: "1:941619830061:web:de9e0f791eb8f6eacf87a4",
     measurementId: "G-7064P2RFHN"
   };
-  // ============================================================
-  // NOTE: Nuru's model, system instruction, and xAI API key all
-  // live server-side now, in functions/index.js — not here. This
-  // file only calls the "chatWithNuru" Cloud Function.
+  // Nuru's model, system instruction, and xAI API key all live server-side
+  // in functions/index.js — this file only calls the "chatWithNuru" function.
+  //
+  // The composer now sends a `model` field with each request (see
+  // chatWithNuru({ messages, model }) below) so the person can switch
+  // between Grok variants inline. For it to actually change which model
+  // answers, chatWithNuru in functions/index.js needs to read
+  // data.model and pass it through to the xAI chat completions call
+  // (falling back to a default if it's missing/unrecognized) — that
+  // file isn't part of this front-end and needs updating separately.
   // ============================================================
 
+  const hero = document.getElementById('hero');
+  const startBtn = document.getElementById('start-btn');
   const emptyState = document.getElementById('empty-state');
   const messagesEl = document.getElementById('messages');
   const messagesInner = document.getElementById('messages-inner');
   const inputEl = document.getElementById('input');
   const sendBtn = document.getElementById('send-btn');
-  const statusText = document.getElementById('status-text');
-  const mark = document.getElementById('mark');
   const connBanner = document.getElementById('conn-banner');
   const newChatBtn = document.getElementById('new-chat-btn');
+  const currentHistoryItem = document.getElementById('current-history-item');
   const sidebar = document.getElementById('sidebar');
   const sidebarOverlay = document.getElementById('sidebar-overlay');
   const menuBtn = document.getElementById('menu-btn');
-  const currentHistoryItem = document.getElementById('current-history-item');
+  const modelPicker = document.getElementById('model-picker');
+  const modelPickerBtn = document.getElementById('model-picker-btn');
+  const modelPickerLabel = document.getElementById('model-picker-label');
+  const modelOptions = document.querySelectorAll('.model-option');
 
   let chatWithNuru = null;
-  let conversation = []; // [{ role: 'user'|'assistant', content: string }, ...]
+  let conversation = [];
   let hasStarted = false;
   let ready = false;
+  let selectedModel = 'grok-4.3';
 
   function novaAvatar(){
     const div = document.createElement('div');
     div.className = 'avatar';
-    div.innerHTML = `<div class="mark"><svg viewBox="0 0 20 20">
-      <line class="horizon" x1="2" y1="15" x2="18" y2="15"/>
+    div.innerHTML = `<svg class="glyph" viewBox="0 0 20 20">
+      <line class="horizon" x1="2" y1="15" x2="18" y2="15" stroke-width="1.4"/>
       <path class="core" d="M4 14 A6 6 0 0 1 16 14 Z"/>
       <g class="ray" fill="none">
-        <line x1="5.6" y1="8.6" x2="4.5" y2="6.2"/>
-        <line x1="10" y1="6.8" x2="10" y2="4.1"/>
-        <line x1="14.4" y1="8.6" x2="15.5" y2="6.2"/>
+        <line x1="5.6" y1="8.6" x2="4.5" y2="6.2" stroke-width="2.2"/>
+        <line x1="10" y1="6.8" x2="10" y2="4.1" stroke-width="2.2"/>
+        <line x1="14.4" y1="8.6" x2="15.5" y2="6.2" stroke-width="2.2"/>
       </g>
-    </svg></div>`;
+    </svg>`;
     return div;
   }
 
@@ -541,10 +542,44 @@
     if(el) el.remove();
   }
 
+  function openSidebar(){ sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); }
+  function closeSidebar(){ sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); }
+  menuBtn.addEventListener('click', openSidebar);
+  sidebarOverlay.addEventListener('click', closeSidebar);
+
+  modelPickerBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = modelPicker.classList.toggle('open');
+    modelPickerBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+  modelOptions.forEach(opt => {
+    opt.addEventListener('click', () => {
+      selectedModel = opt.dataset.model;
+      modelPickerLabel.textContent = opt.dataset.label;
+      modelOptions.forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+      modelPicker.classList.remove('open');
+      modelPickerBtn.setAttribute('aria-expanded', 'false');
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if(!modelPicker.contains(e.target)){
+      modelPicker.classList.remove('open');
+      modelPickerBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  function enterApp(){
+    hero.classList.add('hidden');
+    emptyState.classList.add('active');
+  }
+  startBtn.addEventListener('click', enterApp);
+
   function beginConversation(){
     if(hasStarted) return;
     hasStarted = true;
-    emptyState.style.display = 'none';
+    hero.classList.add('hidden');
+    emptyState.classList.remove('active');
     messagesEl.classList.add('active');
     closeSidebar();
   }
@@ -558,11 +593,10 @@
     }
     conversation.push({ role: 'user', content: text });
     addTyping();
-    mark.classList.add('thinking');
     sendBtn.disabled = true;
     inputEl.disabled = true;
     try{
-      const result = await chatWithNuru({ messages: conversation });
+      const result = await chatWithNuru({ messages: conversation, model: selectedModel });
       const reply = result.data.text;
       conversation.push({ role: 'assistant', content: reply });
       removeTyping();
@@ -572,7 +606,6 @@
       removeTyping();
       addMessage('nova', "I ran into a problem reaching the model: " + (err && err.message ? err.message : 'unknown error') + ".");
     }finally{
-      mark.classList.remove('thinking');
       sendBtn.disabled = false;
       inputEl.disabled = false;
       inputEl.focus();
@@ -589,38 +622,26 @@
 
   sendBtn.addEventListener('click', handleSend);
   inputEl.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter' && !e.shiftKey){
-      e.preventDefault();
-      handleSend();
-    }
+    if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); handleSend(); }
   });
   inputEl.addEventListener('input', () => {
     inputEl.style.height = 'auto';
     inputEl.style.height = Math.min(inputEl.scrollHeight, 160) + 'px';
   });
 
-  document.querySelectorAll('.suggestion').forEach(el => {
-    el.addEventListener('click', () => sendMessage(el.dataset.prompt));
+  document.querySelectorAll('.action-card').forEach(el => {
+    el.addEventListener('click', () => {
+      emptyState.classList.remove('active');
+      sendMessage(el.dataset.prompt);
+    });
   });
 
   newChatBtn.addEventListener('click', () => location.reload());
 
-  function openSidebar(){
-    sidebar.classList.add('open');
-    sidebarOverlay.classList.add('active');
-  }
-  function closeSidebar(){
-    sidebar.classList.remove('open');
-    sidebarOverlay.classList.remove('active');
-  }
-  menuBtn.addEventListener('click', openSidebar);
-  sidebarOverlay.addEventListener('click', closeSidebar);
-
   async function init(){
     if(!firebaseConfig.apiKey || firebaseConfig.apiKey === "YOUR_API_KEY"){
-      statusText.textContent = 'not configured';
       connBanner.style.display = 'block';
-      connBanner.textContent = "Nuru isn't connected yet — open this file and replace the placeholder values in firebaseConfig near the top of the <script> with your real Firebase project config, then reload.";
+      connBanner.textContent = "Nuru isn't connected yet — check your firebaseConfig near the top of the <script>.";
       return;
     }
     try{
@@ -628,15 +649,12 @@
       const functions = getFunctions(firebaseApp);
       chatWithNuru = httpsCallable(functions, 'chatWithNuru');
       ready = true;
-      statusText.textContent = 'Nuru · via xAI';
       inputEl.disabled = false;
       sendBtn.disabled = false;
-      inputEl.focus();
     }catch(err){
       console.error(err);
-      statusText.textContent = 'connection failed';
       connBanner.style.display = 'block';
-      connBanner.textContent = 'Could not connect to the Cloud Function: ' + (err && err.message ? err.message : 'make sure functions are deployed and Firebase config is correct.');
+      connBanner.textContent = 'Could not connect to the Cloud Function: ' + (err && err.message ? err.message : 'make sure functions are deployed.');
     }
   }
 
