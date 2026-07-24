@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#FAF9F5">
-<title>Nuru.</title>
+<title>Nuru</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
@@ -896,7 +896,7 @@
   } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
   import {
     getFirestore, collection, doc, addDoc, updateDoc, setDoc,
-    onSnapshot, query, orderBy, where, limit, serverTimestamp
+    onSnapshot, query, orderBy, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
   // ============================================================
@@ -918,20 +918,26 @@
   // Safe to keep client-side (Mapbox tokens are meant to be public;
   // restrict it to your domain in the Mapbox dashboard).
   // ============================================================
-  const MAPBOX_TOKEN = "pk.eyJ1Ijoia2F0bGVnb3BoYXNoYSIsImEiOiJjbTlpOTdzbmYwMGNsMmpzYWJtZzN4d3pqIn0.Zt-aSMEoahrV3zkiVVHbOw";
+  const MAPBOX_TOKEN = "YOUR_MAPBOX_TOKEN";
   mapboxgl.accessToken = MAPBOX_TOKEN;
 
   // ============================================================
-  // SHIPDAY — ride requests are sent as Shipday orders, but the
-  // Shipday API key must NOT live in this file (anyone viewing
-  // source could place orders on your account). Instead this file
-  // calls a Firebase Cloud Function, "createRideOrder", the same
-  // pattern as chatWithNuru below. That function takes
-  // { pickup, dropoff, distanceKm, etaMin, fare, riderName }, calls
-  // Shipday's POST /orders with your Shipday API key server-side,
-  // and writes a matching doc to rideRequests/{id} in Firestore so
-  // this page can listen for driver-assignment updates. Deploy a
-  // function like that alongside your existing chatWithNuru one.
+  // SHIPDAY — drivers are onboarded and managed entirely in Shipday
+  // (not in a Nuru-owned "drivers" collection), so this file never
+  // reads driver data directly. Two Cloud Functions front Shipday,
+  // same pattern as chatWithNuru:
+  //   - createRideOrder: takes { pickup, dropoff, distanceKm, fare,
+  //     riderName }, posts to Shipday's POST /orders server-side,
+  //     and writes rideRequests/{id} in Firestore. Shipday's own
+  //     auto-assignment then picks the driver — this app doesn't do
+  //     its own matching. A shipdayWebhook function relays Shipday's
+  //     assignment/pickup/completion events back into that doc, and
+  //     this page listens on it for live status.
+  //   - getAvailableDrivers: calls Shipday's GET /carriers server-side
+  //     and returns how many onboarded drivers are currently on
+  //     shift, for the "drivers online" note in the ride panel.
+  // The Shipday API key must NOT live in this file — anyone viewing
+  // source could place orders or read your driver roster.
   // ============================================================
 
   // Nuru's model, system instruction, and xAI API key all live server-side
@@ -1013,6 +1019,7 @@
 
   let chatWithNuru = null;
   let createRideOrder = null;
+  let getAvailableDrivers = null;
   let conversation = [];
   let hasStarted = false;
   let ready = false;
@@ -1034,8 +1041,7 @@
   let destCoord = null;     // { lat, lng, address }
   let pickupMarker = null;
   let destMarker = null;
-  let driverMarkers = {};   // uid -> mapboxgl.Marker
-  let driversUnsub = null;
+  let driversPollTimer = null;
   let rideRequestUnsub = null;
   let currentRideId = null;
   let geocodeDebounce = null;
@@ -1357,7 +1363,6 @@
       ridePickupInput.value = item.address;
       ridePickupSuggestions.classList.remove('active');
       setPickupMarker(coord);
-      watchNearbyDrivers();
     }else{
       destCoord = coord;
       rideDestInput.value = item.address;
@@ -1414,43 +1419,26 @@
     }
   }
 
-  function clearDriverMarkers(){
-    Object.values(driverMarkers).forEach(m => m.remove());
-    driverMarkers = {};
+  function checkAvailableDrivers(){
+    if(!getAvailableDrivers) return;
+    getAvailableDrivers({}).then(result => {
+      const count = result.data && typeof result.data.count === 'number' ? result.data.count : 0;
+      rideDriversText.textContent = count > 0
+        ? `${count} driver${count > 1 ? 's' : ''} online with Shipday right now`
+        : 'No drivers online right now';
+    }).catch(err => {
+      console.error('driver availability check failed', err);
+      rideDriversText.textContent = 'Driver availability unavailable right now';
+    });
   }
 
-  function watchNearbyDrivers(){
-    if(!db || !pickupCoord) return;
-    if(driversUnsub) driversUnsub();
-    const q = query(collection(db, 'drivers'), where('available', '==', true), limit(50));
-    driversUnsub = onSnapshot(q, (snap) => {
-      const nearby = [];
-      const seen = new Set();
-      snap.forEach(d => {
-        const data = d.data();
-        if(typeof data.lat !== 'number' || typeof data.lng !== 'number') return;
-        const dist = haversineKm(pickupCoord, { lat: data.lat, lng: data.lng });
-        if(dist > 8) return; // only show drivers within ~8km
-        nearby.push(dist);
-        seen.add(d.id);
-        if(rideMap){
-          if(!driverMarkers[d.id]){
-            const el = document.createElement('div');
-            el.className = 'driver-marker';
-            driverMarkers[d.id] = new mapboxgl.Marker({ element: el });
-          }
-          driverMarkers[d.id].setLngLat([data.lng, data.lat]).addTo(rideMap);
-        }
-      });
-      Object.keys(driverMarkers).forEach(id => {
-        if(!seen.has(id)){ driverMarkers[id].remove(); delete driverMarkers[id]; }
-      });
-      if(nearby.length){
-        rideDriversText.textContent = `${nearby.length} driver${nearby.length > 1 ? 's' : ''} nearby, closest ~${Math.max(1, Math.round(Math.min(...nearby)*10)/10)} km away`;
-      }else{
-        rideDriversText.textContent = 'No drivers nearby right now';
-      }
-    }, (err) => console.error('driver watch failed', err));
+  function startDriverPolling(){
+    checkAvailableDrivers();
+    if(driversPollTimer) clearInterval(driversPollTimer);
+    driversPollTimer = setInterval(checkAvailableDrivers, 20000);
+  }
+  function stopDriverPolling(){
+    if(driversPollTimer){ clearInterval(driversPollTimer); driversPollTimer = null; }
   }
 
   function openRidePanel(prefill){
@@ -1458,6 +1446,7 @@
     requestAnimationFrame(() => rideOverlay.classList.add('show'));
     document.body.style.overflow = 'hidden';
     setTimeout(() => { ensureRideMap(); if(rideMap) rideMap.resize(); }, 250);
+    startDriverPolling();
 
     if(prefill && prefill.dest){
       rideDestInput.value = prefill.dest;
@@ -1481,7 +1470,7 @@
     rideOverlay.classList.remove('show');
     document.body.style.overflow = '';
     setTimeout(() => rideOverlay.classList.remove('active'), 220);
-    if(driversUnsub){ driversUnsub(); driversUnsub = null; }
+    stopDriverPolling();
   }
 
   rideClose.addEventListener('click', closeRidePanel);
@@ -1745,6 +1734,7 @@
       const functions = getFunctions(firebaseApp);
       chatWithNuru = httpsCallable(functions, 'chatWithNuru');
       createRideOrder = httpsCallable(functions, 'createRideOrder');
+      getAvailableDrivers = httpsCallable(functions, 'getAvailableDrivers');
       auth = getAuth(firebaseApp);
       db = getFirestore(firebaseApp);
       let authInitialized = false;
