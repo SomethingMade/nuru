@@ -1463,17 +1463,16 @@
       const result = await getVoiceSession();
       const token = result && result.data && result.data.value;
       if(!token) throw new Error('No voice session token returned.');
-      const ws = new WebSocket('wss://api.x.ai/v1/realtime?model=grok-voice-latest', ['xai-client-secret.' + token]);
+      // Connects to the "Nuru" voice agent configured in the xAI console
+      // (Deployment tab → Code integration). Its voice + instructions live
+      // there now, not in this file — that's the source of truth.
+      const ws = new WebSocket('wss://api.x.ai/v1/realtime?agent_id=agent_J3P3EvFzWeJKy4F2', ['xai-client-secret.' + token]);
       voiceWs = ws;
       ws.addEventListener('open', () => {
         ws.send(JSON.stringify({
           type: 'session.update',
           session: {
-            voice: 'eve',
-            instructions: 'You are Nuru, a warm, concise voice companion. Keep replies conversational and reasonably brief.',
-            turn_detection: { type: 'server_vad' },
-            input_audio_format: 'pcm16',
-            output_audio_format: 'pcm16'
+            turn_detection: { type: 'server_vad' }
           }
         }));
         startMicStreaming();
