@@ -88,6 +88,7 @@
   .history-item{ padding: 9px 10px; border-radius:8px; font-size:13px; color: var(--ink-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
   .history-item:hover{ background: var(--bg-card); }
   .history-item.active{ background: var(--bg-card); color: var(--ink); font-weight:500; }
+  .history-empty{ padding: 9px 10px; font-size:12.5px; color: var(--ink-faint); line-height:1.5; }
   .sidebar-footer{ border-top:1px solid var(--line); padding-top:12px; font-size:10.5px; color: var(--ink-faint); padding-left:8px; font-family: var(--font-mono); text-transform:uppercase; letter-spacing:0.05em; }
 
   /* ================= main ================= */
@@ -474,7 +475,7 @@
   <div class="new-chat" id="new-chat-btn"><span>＋</span> New chat</div>
   <div class="history-label">Recent</div>
   <div class="history-list" id="history-list">
-    <div class="history-item active" id="current-history-item">New conversation</div>
+    <div class="history-empty" id="history-empty">Sign in to save chats</div>
   </div>
   <div class="account-row" id="account-row">
     <button class="account-signin-btn" id="account-signin-btn">
@@ -671,6 +672,10 @@
     createUserWithEmailAndPassword, signInWithEmailAndPassword,
     updateProfile, signOut
   } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+  import {
+    getFirestore, collection, doc, addDoc, updateDoc, setDoc,
+    onSnapshot, query, orderBy, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
   // ============================================================
   // YOUR FIREBASE PROJECT CONFIG
@@ -708,7 +713,8 @@
   const sendBtn = document.getElementById('send-btn');
   const connBanner = document.getElementById('conn-banner');
   const newChatBtn = document.getElementById('new-chat-btn');
-  const currentHistoryItem = document.getElementById('current-history-item');
+  const historyList = document.getElementById('history-list');
+  const historyEmpty = document.getElementById('history-empty');
   const sidebar = document.getElementById('sidebar');
   const sidebarOverlay = document.getElementById('sidebar-overlay');
   const menuBtn = document.getElementById('menu-btn');
@@ -742,9 +748,14 @@
   let ready = false;
   let selectedModel = 'grok-latest';
   let auth = null;
+  let db = null;
   let currentUser = null;
   let authMode = 'signin'; // 'signin' | 'signup'
   let pendingMessage = null; // text queued to send once auth succeeds
+  let currentConvId = null;
+  let historyUnsub = null;
+  let historyDocs = {}; // id -> {title, messages, model}
+  let savingConv = false;
 
   function novaAvatar(){
     const div = document.createElement('div');
@@ -833,14 +844,111 @@
     closeSidebar();
   }
 
+  function highlightActiveHistory(id){
+    historyList.querySelectorAll('.history-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.id === id);
+    });
+  }
+
+  function renderHistoryList(docsArr){
+    historyDocs = {};
+    historyList.innerHTML = '';
+    if(!docsArr.length){
+      const empty = document.createElement('div');
+      empty.className = 'history-empty';
+      empty.textContent = 'No saved chats yet';
+      historyList.appendChild(empty);
+      return;
+    }
+    docsArr.forEach(({ id, data }) => {
+      historyDocs[id] = data;
+      const item = document.createElement('div');
+      item.className = 'history-item' + (id === currentConvId ? ' active' : '');
+      item.dataset.id = id;
+      item.textContent = data.title || 'New conversation';
+      item.addEventListener('click', () => openConversationFromHistory(id));
+      historyList.appendChild(item);
+    });
+  }
+
+  function openConversationFromHistory(id){
+    const data = historyDocs[id];
+    if(!data || id === currentConvId) { closeSidebar(); return; }
+    currentConvId = id;
+    conversation = (data.messages || []).slice();
+    messagesInner.innerHTML = '';
+    hasStarted = true;
+    hero.classList.add('hidden');
+    emptyState.classList.remove('active');
+    messagesEl.classList.add('active');
+    conversation.forEach(m => addMessage(m.role === 'user' ? 'user' : 'nova', m.content));
+    highlightActiveHistory(id);
+    closeSidebar();
+  }
+
+  function subscribeHistory(uid){
+    if(historyUnsub) historyUnsub();
+    const q = query(collection(db, 'users', uid, 'conversations'), orderBy('updatedAt', 'desc'));
+    historyUnsub = onSnapshot(q, (snap) => {
+      const docsArr = [];
+      snap.forEach(d => docsArr.push({ id: d.id, data: d.data() }));
+      renderHistoryList(docsArr);
+    }, (err) => console.error('history listener error', err));
+  }
+
+  function unsubscribeHistory(){
+    if(historyUnsub){ historyUnsub(); historyUnsub = null; }
+    historyDocs = {};
+    historyList.innerHTML = '<div class="history-empty">Sign in to save chats</div>';
+  }
+
+  function resetToNewChat(){
+    currentConvId = null;
+    conversation = [];
+    hasStarted = false;
+    messagesInner.innerHTML = '';
+    messagesEl.classList.remove('active');
+    hero.classList.add('hidden');
+    emptyState.classList.add('active');
+    highlightActiveHistory(null);
+    inputEl.value = '';
+    inputEl.style.height = 'auto';
+    closeSidebar();
+  }
+
+  async function saveConversation(){
+    if(!currentUser || !db || conversation.length === 0) return;
+    try{
+      if(currentConvId){
+        await updateDoc(doc(db, 'users', currentUser.uid, 'conversations', currentConvId), {
+          messages: conversation,
+          model: selectedModel,
+          updatedAt: serverTimestamp()
+        });
+      }else{
+        const firstUserMsg = conversation.find(m => m.role === 'user');
+        const title = firstUserMsg ? (firstUserMsg.content.slice(0, 34) + (firstUserMsg.content.length > 34 ? '…' : '')) : 'New conversation';
+        const ref = await addDoc(collection(db, 'users', currentUser.uid, 'conversations'), {
+          title,
+          messages: conversation,
+          model: selectedModel,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+        currentConvId = ref.id;
+        highlightActiveHistory(currentConvId);
+      }
+    }catch(err){
+      console.error('save conversation failed', err);
+    }
+  }
+
   async function sendMessage(text){
     if(!text || !ready) return;
     beginConversation();
     addMessage('user', text);
-    if(currentHistoryItem.textContent === 'New conversation'){
-      currentHistoryItem.textContent = text.slice(0, 34) + (text.length > 34 ? '…' : '');
-    }
     conversation.push({ role: 'user', content: text });
+    await saveConversation();
     addTyping();
     sendBtn.disabled = true;
     inputEl.disabled = true;
@@ -850,6 +958,7 @@
       conversation.push({ role: 'assistant', content: reply });
       removeTyping();
       addMessage('nova', reply);
+      await saveConversation();
     }catch(err){
       console.error(err);
       removeTyping();
@@ -1041,7 +1150,7 @@
     });
   });
 
-  newChatBtn.addEventListener('click', () => location.reload());
+  newChatBtn.addEventListener('click', () => resetToNewChat());
 
   async function init(){
     if(!firebaseConfig.apiKey || firebaseConfig.apiKey === "YOUR_API_KEY"){
@@ -1054,9 +1163,18 @@
       const functions = getFunctions(firebaseApp);
       chatWithNuru = httpsCallable(functions, 'chatWithNuru');
       auth = getAuth(firebaseApp);
+      db = getFirestore(firebaseApp);
+      let authInitialized = false;
       onAuthStateChanged(auth, (user) => {
         currentUser = user;
         renderAccount(user);
+        if(user){
+          subscribeHistory(user.uid);
+        }else{
+          unsubscribeHistory();
+          if(authInitialized) resetToNewChat();
+        }
+        authInitialized = true;
       });
       ready = true;
       inputEl.disabled = false;
