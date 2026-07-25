@@ -554,6 +554,74 @@
   }
   .driver-marker::after{ content:''; width:7px; height:7px; border-radius:50%; background: var(--accent); }
 
+  /* ================= food panel ================= */
+  .food-sheet{ background: var(--bg-raised); width:100%; max-width: 960px; height: min(700px, 88vh);
+    border-radius: 20px; border:1px solid var(--line); box-shadow: 0 24px 60px rgba(23,19,15,0.22);
+    display:flex; overflow:hidden; transform: translateY(12px) scale(0.98); opacity:0;
+    transition: transform .22s cubic-bezier(.2,.8,.3,1), opacity .2s ease; }
+  .ride-overlay.show .food-sheet{ transform: translateY(0) scale(1); opacity:1; }
+
+  .food-panel{ width: 380px; flex-shrink:0; display:flex; flex-direction:column;
+    border-right:1px solid var(--line); overflow:hidden; }
+  .food-panel-head{ display:flex; align-items:center; gap:10px; padding:16px 16px 12px; flex-shrink:0; }
+  .food-back{ width:28px; height:28px; border-radius:50%; flex-shrink:0; display:none;
+    background: var(--bg-card); border:1px solid var(--line); color: var(--ink-dim);
+    align-items:center; justify-content:center; cursor:pointer; }
+  .food-back.show{ display:flex; }
+  .food-back:hover{ background: var(--bg-card-hover); }
+  .food-panel-head h3{ font-family: var(--font-display); font-weight:600; font-size:17px; margin:0; flex:1; }
+
+  .food-view{ display:none; flex-direction:column; flex:1; min-height:0; }
+  .food-view.active{ display:flex; }
+
+  .food-list{ flex:1; overflow-y:auto; padding: 0 16px 16px; }
+  .restaurant-card{ display:flex; align-items:center; gap:12px; padding:11px; border-radius:13px;
+    border:1px solid var(--line); background: var(--bg-card); margin-bottom:9px; cursor:pointer;
+    transition: border-color .12s, background .12s; }
+  .restaurant-card:hover{ border-color: var(--accent-line); background: var(--bg-card-hover); }
+  .restaurant-avatar{ width:42px; height:42px; border-radius:11px; flex-shrink:0;
+    background: var(--accent-soft); border:1px solid var(--accent-line);
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--font-display); font-weight:700; font-size:15px; color: var(--accent-text); }
+  .restaurant-info{ flex:1; min-width:0; }
+  .restaurant-name{ font-size:13.5px; font-weight:600; color: var(--ink); }
+  .restaurant-meta{ font-size:11.5px; color: var(--ink-faint); margin-top:1px; }
+  .food-empty-note{ padding:24px 16px; text-align:center; color: var(--ink-faint); font-size:12.5px; line-height:1.6; }
+
+  .menu-restaurant-head{ padding:0 16px 12px; flex-shrink:0; }
+  .menu-restaurant-head .restaurant-name{ font-size:15px; }
+  .menu-list{ flex:1; overflow-y:auto; padding: 0 16px 90px; }
+  .menu-item{ display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .menu-item-info{ flex:1; min-width:0; }
+  .menu-item-name{ font-size:13.5px; font-weight:600; color: var(--ink); }
+  .menu-item-price{ font-size:12px; color: var(--ink-faint); margin-top:1px; }
+  .qty-stepper{ display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .qty-btn{ width:24px; height:24px; border-radius:50%; border:1px solid var(--line); background: var(--bg-card);
+    color: var(--ink); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; line-height:1; }
+  .qty-btn:hover{ background: var(--bg-card-hover); }
+  .qty-val{ font-size:12.5px; min-width:14px; text-align:center; font-family: var(--font-display); }
+  .add-btn{ width:24px; height:24px; border-radius:50%; border:none;
+    background: linear-gradient(180deg, var(--accent-bright), var(--accent)); color:#221605;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px; flex-shrink:0; }
+
+  .cart-bar{ position:absolute; left:16px; right:16px; bottom:16px; display:none; align-items:center;
+    justify-content:space-between; gap:10px; padding:11px 14px; border-radius:13px;
+    background: linear-gradient(180deg, var(--accent-bright), var(--accent)); color:#221605; cursor:pointer;
+    box-shadow: 0 10px 24px rgba(196,121,31,0.3); z-index:5; }
+  .cart-bar.show{ display:flex; }
+  .cart-bar .cb-left{ font-family: var(--font-display); font-weight:600; font-size:13px; }
+  .cart-bar .cb-right{ font-family: var(--font-display); font-weight:700; font-size:13.5px; }
+
+  .checkout-scroll{ flex:1; overflow-y:auto; padding:0 16px 16px; }
+  .cart-items{ margin-bottom:12px; }
+  .cart-row{ display:flex; justify-content:space-between; gap:8px; font-size:12.5px; color: var(--ink-dim); padding:5px 0; }
+  .cart-row b{ color: var(--ink); font-weight:500; }
+  .checkout-total{ display:flex; justify-content:space-between; align-items:center; padding-top:8px;
+    border-top:1px solid var(--line); font-size:14px; font-weight:600; color: var(--ink); font-family: var(--font-display); }
+
+  .food-map-wrap{ flex:1; position:relative; background: var(--bg-card-hover); }
+  #food-map{ position:absolute; inset:0; }
+
   /* ================= mobile ================= */
   @media (max-width: 768px){
     .menu-btn{ display:flex; }
@@ -612,6 +680,14 @@
     .ride-overlay.show .ride-sheet{ transform: translateY(0); }
     .ride-panel{ width:100%; border-right:none; border-bottom:1px solid var(--line); max-height:52%; padding:14px 16px 12px; }
     .ride-map-wrap{ flex:1; min-height:120px; }
+
+    .food-sheet{
+      max-width:none; width:100%; height:92vh; border-radius:20px 20px 0 0;
+      flex-direction:column; transform: translateY(100%);
+    }
+    .ride-overlay.show .food-sheet{ transform: translateY(0); }
+    .food-panel{ width:100%; border-right:none; border-bottom:1px solid var(--line); height:100%; }
+    .food-map-wrap{ display:none; }
   }
 </style>
 </head>
@@ -669,7 +745,7 @@
       </svg>
     </div>
     <h1>Meet Nuru.</h1>
-    <p class="tagline"><b>Nuru</b> means <i>light</i> in Swahili — tell it where you're headed, and it finds you a ride.</p>
+    <p class="tagline"><b>Nuru</b> means <i>light</i> in Swahili — tell it where you're headed or what you're craving, and it handles the rest.</p>
     <button class="cta" id="start-btn">Start chatting</button>
   </div>
 
@@ -686,8 +762,8 @@
         <line x1="17.4" y1="11" x2="19.2" y2="9.8" stroke-width="1.3"/>
       </g>
     </svg>
-    <h2>Where are you headed?</h2>
-    <p>Tell Nuru your destination, or start from one of these.</p>
+    <h2>Ride, or order in?</h2>
+    <p>Tell Nuru what you need, or start from one of these.</p>
     <div class="action-grid">
       <div class="action-card ride-card" id="ride-quick-action">
         <div class="ride-icon">
@@ -695,7 +771,16 @@
         </div>
         <div>
           <div class="title">Book a ride</div>
-          <div class="sub">Set pickup &amp; destination, see nearby drivers</div>
+          <div class="sub">Set pickup &amp; destination</div>
+        </div>
+      </div>
+      <div class="action-card ride-card" id="food-quick-action">
+        <div class="ride-icon">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M5 3v6M7 3v6M5 9c0 1.5 1 2 2 2M6 11v6" stroke="#221605" stroke-width="1.4" stroke-linecap="round"/><path d="M14 3c-1.4 0-2.4 1.6-2.4 4.5S12.6 12 14 12v6" stroke="#221605" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="title">Order food</div>
+          <div class="sub">Browse restaurants near you</div>
         </div>
       </div>
       <div class="action-card" data-prompt="What would a ride to the airport cost right now?">
@@ -703,15 +788,10 @@
         <div class="title">Fare estimate</div>
         <div class="sub">Get a quick price before you book</div>
       </div>
-      <div class="action-card" data-prompt="Where is my driver right now?">
+      <div class="action-card" data-prompt="Where is my order right now?">
         <svg viewBox="0 0 20 20" fill="none"><path d="M12 21s-7-6.5-7-11.5A7 7 0 0 1 19 9.5C19 14.5 12 21 12 21Z" stroke="var(--accent)" stroke-width="1.4"/><circle cx="12" cy="9.5" r="2.2" stroke="var(--accent)" stroke-width="1.4"/></svg>
-        <div class="title">Track my ride</div>
-        <div class="sub">Check status on an active trip</div>
-      </div>
-      <div class="action-card" data-prompt="I have a question about a ride.">
-        <svg viewBox="0 0 20 20" fill="none"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h9A1.5 1.5 0 0 1 16 5.5v6a1.5 1.5 0 0 1-1.5 1.5H9l-3 3v-3H5.5A1.5 1.5 0 0 1 4 11.5v-6Z" stroke="var(--accent)" stroke-width="1.4" stroke-linejoin="round"/></svg>
-        <div class="title">Ride help</div>
-        <div class="sub">Ask Nuru anything else</div>
+        <div class="title">Track my order</div>
+        <div class="sub">Check status on a ride or delivery</div>
       </div>
     </div>
   </div>
@@ -886,6 +966,84 @@
   </div>
 </div>
 
+<div class="ride-overlay" id="food-overlay">
+  <div class="ride-sheet food-sheet" id="food-sheet" role="dialog" aria-modal="true" aria-labelledby="food-title">
+    <div class="food-panel">
+      <div class="food-panel-head">
+        <button class="food-back" id="food-back" aria-label="Back">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M9 1L3 7l6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <h3 id="food-title">Order food</h3>
+        <button class="ride-close" id="food-close" aria-label="Close">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <!-- view: restaurant list -->
+      <div class="food-view active" id="food-view-restaurants">
+        <div class="food-list" id="restaurant-list">
+          <div class="food-empty-note">Loading restaurants…</div>
+        </div>
+      </div>
+
+      <!-- view: menu -->
+      <div class="food-view" id="food-view-menu">
+        <div class="menu-restaurant-head">
+          <div class="restaurant-name" id="menu-restaurant-name">—</div>
+          <div class="restaurant-meta" id="menu-restaurant-meta"></div>
+        </div>
+        <div class="menu-list" id="menu-list"></div>
+      </div>
+
+      <!-- view: checkout -->
+      <div class="food-view" id="food-view-checkout">
+        <div class="checkout-scroll">
+          <div class="ride-field-group">
+            <div class="ride-field">
+              <span class="dot dest"></span>
+              <input type="text" id="food-address" placeholder="Delivery address" autocomplete="off">
+            </div>
+            <div id="food-address-suggestions" class="ride-suggestions"></div>
+          </div>
+          <div class="cart-items" id="checkout-cart-items"></div>
+          <div class="ride-summary active">
+            <div class="ride-summary-row"><span>Subtotal</span><b id="food-subtotal">R0</b></div>
+            <div class="ride-summary-row"><span>Delivery fee</span><b id="food-delivery-fee">R0</b></div>
+            <div class="checkout-total"><span>Total</span><span id="food-total">R0</span></div>
+          </div>
+        </div>
+        <div style="padding:0 16px 16px;">
+          <button class="ride-request-btn" id="food-place-order-btn">Place order</button>
+        </div>
+      </div>
+
+      <!-- view: status -->
+      <div class="food-view" id="food-view-status">
+        <div class="ride-status active" id="food-status">
+          <div class="spin"></div>
+          <h4 id="food-status-title">Sending your order…</h4>
+          <p id="food-status-sub">Hang tight while the restaurant confirms.</p>
+          <div class="ride-driver-card">
+            <div class="ride-driver-avatar" id="food-driver-avatar">D</div>
+            <div class="ride-driver-info">
+              <div class="ride-driver-name" id="food-driver-name">Driver assigned</div>
+              <div class="ride-driver-sub" id="food-driver-sub">On the way to the restaurant</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cart-bar" id="cart-bar">
+        <span class="cb-left" id="cart-bar-count">0 items</span>
+        <span class="cb-right" id="cart-bar-total">R0</span>
+      </div>
+    </div>
+    <div class="food-map-wrap">
+      <div id="food-map"></div>
+    </div>
+  </div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
   import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-functions.js";
@@ -896,7 +1054,7 @@
   } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
   import {
     getFirestore, collection, doc, addDoc, updateDoc, setDoc,
-    onSnapshot, query, orderBy, serverTimestamp
+    onSnapshot, query, orderBy, where, limit, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
   // ============================================================
@@ -918,7 +1076,7 @@
   // Safe to keep client-side (Mapbox tokens are meant to be public;
   // restrict it to your domain in the Mapbox dashboard).
   // ============================================================
-  const MAPBOX_TOKEN = "pk.eyJ1Ijoia2F0bGVnb3BoYXNoYSIsImEiOiJjbTlpOTdzbmYwMGNsMmpzYWJtZzN4d3pqIn0.Zt-aSMEoahrV3zkiVVHbOw";
+  const MAPBOX_TOKEN = "YOUR_MAPBOX_TOKEN";
   mapboxgl.accessToken = MAPBOX_TOKEN;
 
   // ============================================================
@@ -1017,9 +1175,42 @@
   const rideDriverSub = document.getElementById('ride-driver-sub');
   const rideMapEmpty = document.getElementById('ride-map-empty');
 
+  const foodQuickAction = document.getElementById('food-quick-action');
+  const foodOverlay = document.getElementById('food-overlay');
+  const foodClose = document.getElementById('food-close');
+  const foodBack = document.getElementById('food-back');
+  const foodTitle = document.getElementById('food-title');
+  const foodViews = {
+    restaurants: document.getElementById('food-view-restaurants'),
+    menu: document.getElementById('food-view-menu'),
+    checkout: document.getElementById('food-view-checkout'),
+    status: document.getElementById('food-view-status')
+  };
+  const restaurantListEl = document.getElementById('restaurant-list');
+  const menuRestaurantName = document.getElementById('menu-restaurant-name');
+  const menuRestaurantMeta = document.getElementById('menu-restaurant-meta');
+  const menuListEl = document.getElementById('menu-list');
+  const cartBar = document.getElementById('cart-bar');
+  const cartBarCount = document.getElementById('cart-bar-count');
+  const cartBarTotal = document.getElementById('cart-bar-total');
+  const foodAddressInput = document.getElementById('food-address');
+  const foodAddressSuggestions = document.getElementById('food-address-suggestions');
+  const checkoutCartItems = document.getElementById('checkout-cart-items');
+  const foodSubtotalEl = document.getElementById('food-subtotal');
+  const foodDeliveryFeeEl = document.getElementById('food-delivery-fee');
+  const foodTotalEl = document.getElementById('food-total');
+  const foodPlaceOrderBtn = document.getElementById('food-place-order-btn');
+  const foodStatus = document.getElementById('food-status');
+  const foodStatusTitle = document.getElementById('food-status-title');
+  const foodStatusSub = document.getElementById('food-status-sub');
+  const foodDriverAvatar = document.getElementById('food-driver-avatar');
+  const foodDriverName = document.getElementById('food-driver-name');
+  const foodDriverSub = document.getElementById('food-driver-sub');
+
   let chatWithNuru = null;
   let createRideOrder = null;
   let getAvailableDrivers = null;
+  let createFoodOrder = null;
   let conversation = [];
   let hasStarted = false;
   let ready = false;
@@ -1047,6 +1238,21 @@
   let geocodeDebounce = null;
   let activeSuggestionField = null; // 'pickup' | 'dest'
   const AVG_FARE_PER_KM = 12; // ZAR/km baseline used for the on-screen estimate only
+
+  // ---- food ordering state ----
+  let foodMap = null;
+  let restaurantsUnsub = null;
+  let menuUnsub = null;
+  let restaurantsCache = {};
+  let currentRestaurant = null;   // { id, name, address, lat, lng, ... }
+  let cart = {};                  // itemId -> { id, name, price, qty }
+  let foodAddressCoord = null;    // { lat, lng, address }
+  let foodAddressMarker = null;
+  let restaurantMarker = null;
+  let foodGeocodeDebounce = null;
+  let currentFoodOrderId = null;
+  let foodOrderUnsub = null;
+  const DELIVERY_FEE = 25; // flat ZAR delivery fee shown pre-checkout
 
   function novaAvatar(){
     const div = document.createElement('div');
@@ -1546,14 +1752,316 @@
   rideRequestBtn.addEventListener('click', requestRide);
 
   // Lightweight intent detection so the AI chat can still trigger booking —
-  // if the rider's message looks ride-related, open the ride panel alongside
-  // the chat reply instead of requiring the dedicated quick-action card.
+  // if the rider's message looks ride- or food-related, open the matching
+  // panel alongside the chat reply instead of requiring the quick-action cards.
   function maybeDetectRideIntent(text){
-    const m = text.match(/\b(?:ride|pick(?:\s|-)?me\s+up|taxi|cab|drive me)\b.*?\bto\s+(.+)/i);
-    if(m && m[1]){
-      openRidePanel({ dest: m[1].replace(/[.?!]$/,'').trim() });
+    const rideMatch = text.match(/\b(?:ride|pick(?:\s|-)?me\s+up|taxi|cab|drive me)\b.*?\bto\s+(.+)/i);
+    if(rideMatch && rideMatch[1]){
+      openRidePanel({ dest: rideMatch[1].replace(/[.?!]$/,'').trim() });
+      return;
+    }
+    if(/\b(hungry|order (?:me )?(?:some )?food|order.*(?:lunch|dinner|breakfast)|food delivery|get me (?:some )?food)\b/i.test(text)){
+      openFoodPanel();
     }
   }
+
+  // ================= food ordering: restaurants, menu, cart, checkout =================
+
+  function ensureFoodMap(){
+    if(foodMap || MAPBOX_TOKEN === "YOUR_MAPBOX_TOKEN") return;
+    foodMap = new mapboxgl.Map({
+      container: 'food-map',
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: [28.0473, -26.2041],
+      zoom: 11
+    });
+    foodMap.addControl(new mapboxgl.NavigationControl({ showCompass:false }), 'top-right');
+  }
+
+  function showFoodView(name){
+    Object.entries(foodViews).forEach(([key, el]) => el.classList.toggle('active', key === name));
+    foodBack.classList.toggle('show', name !== 'restaurants');
+    cartBar.classList.toggle('show', name === 'menu' && cartCount() > 0);
+    const titles = { restaurants: 'Order food', menu: currentRestaurant ? currentRestaurant.name : 'Menu', checkout: 'Checkout', status: 'Your order' };
+    foodTitle.textContent = titles[name] || 'Order food';
+  }
+
+  function loadRestaurants(){
+    if(!db) return;
+    if(restaurantsUnsub) restaurantsUnsub();
+    const q = query(collection(db, 'restaurants'), where('active', '==', true), limit(40));
+    restaurantsUnsub = onSnapshot(q, (snap) => {
+      restaurantsCache = {};
+      restaurantListEl.innerHTML = '';
+      if(snap.empty){
+        restaurantListEl.innerHTML = '<div class="food-empty-note">No restaurants are live yet. Once an owner adds their restaurant through their portal, it\'ll show up here.</div>';
+        return;
+      }
+      snap.forEach(d => {
+        const data = d.data();
+        restaurantsCache[d.id] = { id: d.id, ...data };
+        const card = document.createElement('div');
+        card.className = 'restaurant-card';
+        const initial = (data.name || '?').trim().charAt(0).toUpperCase();
+        card.innerHTML = `
+          <div class="restaurant-avatar">${initial}</div>
+          <div class="restaurant-info">
+            <div class="restaurant-name">${data.name || 'Restaurant'}</div>
+            <div class="restaurant-meta">${data.cuisine ? data.cuisine + ' · ' : ''}${data.etaMin ? data.etaMin + ' min' : ''}</div>
+          </div>`;
+        card.addEventListener('click', () => selectRestaurant(d.id));
+        restaurantListEl.appendChild(card);
+      });
+    }, (err) => {
+      console.error('restaurant list failed', err);
+      restaurantListEl.innerHTML = '<div class="food-empty-note">Couldn\'t load restaurants right now.</div>';
+    });
+  }
+
+  function selectRestaurant(id){
+    currentRestaurant = restaurantsCache[id];
+    if(!currentRestaurant) return;
+    menuRestaurantName.textContent = currentRestaurant.name || 'Restaurant';
+    menuRestaurantMeta.textContent = [currentRestaurant.cuisine, currentRestaurant.address].filter(Boolean).join(' · ');
+    menuListEl.innerHTML = '<div class="food-empty-note">Loading menu…</div>';
+    showFoodView('menu');
+
+    if(foodMap && typeof currentRestaurant.lat === 'number'){
+      if(restaurantMarker) restaurantMarker.remove();
+      restaurantMarker = new mapboxgl.Marker({ color: '#C4791F' })
+        .setLngLat([currentRestaurant.lng, currentRestaurant.lat]).addTo(foodMap);
+      foodMap.flyTo({ center: [currentRestaurant.lng, currentRestaurant.lat], zoom: 13 });
+    }
+
+    if(menuUnsub) menuUnsub();
+    const q = query(collection(db, 'menuItems'), where('restaurantId', '==', id), where('available', '==', true));
+    menuUnsub = onSnapshot(q, (snap) => {
+      menuListEl.innerHTML = '';
+      if(snap.empty){
+        menuListEl.innerHTML = '<div class="food-empty-note">This restaurant hasn\'t added menu items yet.</div>';
+        return;
+      }
+      snap.forEach(d => {
+        const item = { id: d.id, ...d.data() };
+        const row = document.createElement('div');
+        row.className = 'menu-item';
+        row.innerHTML = `
+          <div class="menu-item-info">
+            <div class="menu-item-name">${item.name || 'Item'}</div>
+            <div class="menu-item-price">R${(item.price || 0).toFixed(2)}</div>
+          </div>
+          <div class="qty-controls" data-id="${item.id}"></div>`;
+        menuListEl.appendChild(row);
+        renderQtyControl(row.querySelector('.qty-controls'), item);
+      });
+    }, (err) => {
+      console.error('menu load failed', err);
+      menuListEl.innerHTML = '<div class="food-empty-note">Couldn\'t load the menu right now.</div>';
+    });
+  }
+
+  function renderQtyControl(container, item){
+    const existing = cart[item.id];
+    container.innerHTML = '';
+    if(!existing){
+      const btn = document.createElement('button');
+      btn.className = 'add-btn';
+      btn.textContent = '+';
+      btn.addEventListener('click', () => { addToCart(item); renderQtyControl(container, item); });
+      container.appendChild(btn);
+    }else{
+      const stepper = document.createElement('div');
+      stepper.className = 'qty-stepper';
+      stepper.innerHTML = `<button class="qty-btn qty-minus">−</button><span class="qty-val">${existing.qty}</span><button class="qty-btn qty-plus">+</button>`;
+      stepper.querySelector('.qty-minus').addEventListener('click', () => { changeQty(item.id, -1); renderQtyControl(container, item); });
+      stepper.querySelector('.qty-plus').addEventListener('click', () => { changeQty(item.id, 1); renderQtyControl(container, item); });
+      container.appendChild(stepper);
+    }
+  }
+
+  function addToCart(item){
+    cart[item.id] = cart[item.id] || { id: item.id, name: item.name, price: item.price || 0, qty: 0 };
+    cart[item.id].qty += 1;
+    updateCartBar();
+  }
+  function changeQty(itemId, delta){
+    if(!cart[itemId]) return;
+    cart[itemId].qty += delta;
+    if(cart[itemId].qty <= 0) delete cart[itemId];
+    updateCartBar();
+  }
+  function cartCount(){ return Object.values(cart).reduce((n, i) => n + i.qty, 0); }
+  function cartSubtotal(){ return Object.values(cart).reduce((s, i) => s + i.qty * i.price, 0); }
+
+  function updateCartBar(){
+    const count = cartCount();
+    cartBar.classList.toggle('show', count > 0 && foodViews.menu.classList.contains('active'));
+    cartBarCount.textContent = `${count} item${count === 1 ? '' : 's'}`;
+    cartBarTotal.textContent = 'R' + cartSubtotal().toFixed(2);
+  }
+  cartBar.addEventListener('click', () => { if(cartCount() > 0) goToCheckout(); });
+
+  function goToCheckout(){
+    checkoutCartItems.innerHTML = '';
+    Object.values(cart).forEach(i => {
+      const row = document.createElement('div');
+      row.className = 'cart-row';
+      row.innerHTML = `<span>${i.qty} × ${i.name}</span><b>R${(i.qty * i.price).toFixed(2)}</b>`;
+      checkoutCartItems.appendChild(row);
+    });
+    const subtotal = cartSubtotal();
+    foodSubtotalEl.textContent = 'R' + subtotal.toFixed(2);
+    foodDeliveryFeeEl.textContent = 'R' + DELIVERY_FEE.toFixed(2);
+    foodTotalEl.textContent = 'R' + (subtotal + DELIVERY_FEE).toFixed(2);
+    foodPlaceOrderBtn.disabled = !foodAddressCoord;
+    showFoodView('checkout');
+
+    if(!foodAddressCoord && navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const coord = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        const results = await geocode(`${coord.lng},${coord.lat}`);
+        const address = results[0] ? results[0].address : 'Current location';
+        foodAddressCoord = { ...coord, address };
+        foodAddressInput.value = address;
+        foodPlaceOrderBtn.disabled = false;
+        placeFoodAddressMarker(coord);
+      }, () => { /* geolocation denied — user can type an address manually */ });
+    }
+  }
+
+  function placeFoodAddressMarker(coord){
+    if(!foodMap) return;
+    if(foodAddressMarker) foodAddressMarker.remove();
+    foodAddressMarker = new mapboxgl.Marker({ color: '#17130F' }).setLngLat([coord.lng, coord.lat]).addTo(foodMap);
+  }
+
+  foodAddressInput.addEventListener('input', () => {
+    clearTimeout(foodGeocodeDebounce);
+    const val = foodAddressInput.value.trim();
+    if(val.length < 3){ foodAddressSuggestions.classList.remove('active'); return; }
+    foodGeocodeDebounce = setTimeout(async () => {
+      const results = await geocode(val);
+      foodAddressSuggestions.innerHTML = '';
+      if(!results.length){ foodAddressSuggestions.classList.remove('active'); return; }
+      results.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'ride-suggestion';
+        row.innerHTML = `${item.short}<div class="sub">${item.address}</div>`;
+        row.addEventListener('click', () => {
+          foodAddressCoord = { lat: item.lat, lng: item.lng, address: item.address };
+          foodAddressInput.value = item.address;
+          foodAddressSuggestions.classList.remove('active');
+          foodPlaceOrderBtn.disabled = false;
+          placeFoodAddressMarker(foodAddressCoord);
+        });
+        foodAddressSuggestions.appendChild(row);
+      });
+      foodAddressSuggestions.classList.add('active');
+    }, 300);
+  });
+  document.addEventListener('click', (e) => {
+    if(!foodAddressInput.contains(e.target)) foodAddressSuggestions.classList.remove('active');
+  });
+
+  function resetFoodStatus(){
+    foodStatus.classList.remove('assigned');
+    foodStatusTitle.textContent = 'Sending your order…';
+    foodStatusSub.textContent = 'Hang tight while the restaurant confirms.';
+    if(foodOrderUnsub){ foodOrderUnsub(); foodOrderUnsub = null; }
+    currentFoodOrderId = null;
+  }
+
+  function watchFoodOrder(orderId){
+    if(!db) return;
+    if(foodOrderUnsub) foodOrderUnsub();
+    foodOrderUnsub = onSnapshot(doc(db, 'foodOrders', orderId), (snap) => {
+      const data = snap.data();
+      if(!data) return;
+      if(data.status === 'assigned' || data.status === 'accepted'){
+        foodStatus.classList.add('assigned');
+        foodStatusTitle.textContent = 'Driver on the way to pick up';
+        foodStatusSub.textContent = 'They\'ll head to you once your order is collected.';
+        const dName = data.driverName || 'Your driver';
+        foodDriverName.textContent = dName;
+        foodDriverAvatar.textContent = dName.trim().charAt(0).toUpperCase() || 'D';
+        foodDriverSub.textContent = data.vehicle || 'On the way to the restaurant';
+      }else if(data.status === 'in_progress'){
+        foodStatusTitle.textContent = 'On the way to you';
+        foodStatusSub.textContent = 'Your order has been picked up.';
+      }else if(data.status === 'completed'){
+        foodStatusTitle.textContent = 'Delivered';
+        foodStatusSub.textContent = 'Enjoy your meal!';
+      }else if(data.status === 'cancelled'){
+        foodStatusTitle.textContent = 'Order cancelled';
+        foodStatusSub.textContent = 'Please try placing the order again.';
+      }
+    }, (err) => console.error('food order watch failed', err));
+  }
+
+  async function placeFoodOrder(){
+    if(!foodAddressCoord || !currentRestaurant || !cartCount() || !currentUser) return;
+    foodPlaceOrderBtn.disabled = true;
+    resetFoodStatus();
+    showFoodView('status');
+
+    const subtotal = cartSubtotal();
+    try{
+      if(!createFoodOrder) throw new Error('Food ordering backend is not deployed yet.');
+      const result = await createFoodOrder({
+        restaurant: {
+          id: currentRestaurant.id,
+          name: currentRestaurant.name,
+          address: currentRestaurant.address,
+          lat: currentRestaurant.lat,
+          lng: currentRestaurant.lng
+        },
+        deliveryAddress: foodAddressCoord,
+        items: Object.values(cart).map(i => ({ name: i.name, price: i.price, qty: i.qty })),
+        subtotal,
+        deliveryFee: DELIVERY_FEE,
+        total: subtotal + DELIVERY_FEE,
+        customerName: currentUser.displayName || currentUser.email
+      });
+      currentFoodOrderId = result.data && result.data.orderId;
+      if(currentFoodOrderId) watchFoodOrder(currentFoodOrderId);
+      cart = {};
+    }catch(err){
+      console.error('place food order failed', err);
+      foodStatusTitle.textContent = "Couldn't place the order";
+      foodStatusSub.textContent = err && err.message ? err.message : 'Please try again in a moment.';
+    }
+  }
+  foodPlaceOrderBtn.addEventListener('click', placeFoodOrder);
+
+  function openFoodPanel(){
+    foodOverlay.classList.add('active');
+    requestAnimationFrame(() => foodOverlay.classList.add('show'));
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => { ensureFoodMap(); if(foodMap) foodMap.resize(); }, 250);
+    if(!currentRestaurant) showFoodView('restaurants');
+    loadRestaurants();
+  }
+
+  function closeFoodPanel(){
+    foodOverlay.classList.remove('show');
+    document.body.style.overflow = '';
+    setTimeout(() => foodOverlay.classList.remove('active'), 220);
+    if(restaurantsUnsub){ restaurantsUnsub(); restaurantsUnsub = null; }
+    if(menuUnsub){ menuUnsub(); menuUnsub = null; }
+  }
+
+  foodClose.addEventListener('click', closeFoodPanel);
+  foodOverlay.addEventListener('click', (e) => { if(e.target === foodOverlay) closeFoodPanel(); });
+  foodQuickAction.addEventListener('click', () => {
+    if(!currentUser){ pendingMessage = null; openAuthSheet(); return; }
+    openFoodPanel();
+  });
+  foodBack.addEventListener('click', () => {
+    const active = Object.entries(foodViews).find(([, el]) => el.classList.contains('active'))[0];
+    if(active === 'menu') showFoodView('restaurants');
+    else if(active === 'checkout') showFoodView('menu');
+    else if(active === 'status') closeFoodPanel();
+  });
 
   function setAuthMode(mode){
     authMode = mode;
@@ -1735,6 +2243,7 @@
       chatWithNuru = httpsCallable(functions, 'chatWithNuru');
       createRideOrder = httpsCallable(functions, 'createRideOrder');
       getAvailableDrivers = httpsCallable(functions, 'getAvailableDrivers');
+      createFoodOrder = httpsCallable(functions, 'createFoodOrder');
       auth = getAuth(firebaseApp);
       db = getFirestore(firebaseApp);
       let authInitialized = false;
